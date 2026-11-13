@@ -1,0 +1,1 @@
+export default function sitemap(){const b='https://nexora-solutions-nexora-solutions6.vercel.app';return ['', '/projects','/blog'].map(p=>({url:b+p,lastModified:new Date()}))}

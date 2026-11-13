@@ -1,0 +1,1 @@
+export default function robots(){return {rules:{userAgent:'*',allow:'/'},sitemap:'https://nexora-solutions-nexora-solutions6.vercel.app/sitemap.xml'}}

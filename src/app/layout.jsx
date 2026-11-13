@@ -1,0 +1,1 @@
+import './globals.css'; export const metadata={title:'Nexora Solutions | Digital Products, Software & AI',description:'Nexora Solutions builds modern websites, mobile apps, AI workflows and custom software.'}; export default function RootLayout({children}){return <html lang="en"><body>{children}</body></html>}
