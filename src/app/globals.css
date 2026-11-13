@@ -27,3 +27,96 @@
 .project-card-media{overflow:hidden}.project-image-wrap,.blog-image-wrap{display:block;position:relative;overflow:hidden;background:#151f30;aspect-ratio:16/9}.project-image-wrap:after,.blog-image-wrap:after{content:'';position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#080b14a8)}.project-image-wrap img,.blog-image-wrap img,.article-cover img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1);filter:saturate(.84)}.project-card:hover .project-image-wrap img,.blog-card:hover .blog-image-wrap img{transform:scale(1.055)}.project-image-index,.project-image-label,.blog-image-category{position:absolute;z-index:2;color:#fff}.project-image-index{top:14px;left:15px;font:600 12px 'Space Grotesk';text-shadow:0 2px 10px #000}.project-image-label{right:13px;bottom:12px;padding:6px 9px;border:1px solid #ffffff45;border-radius:30px;background:#0a1121a8;backdrop-filter:blur(8px);font-size:8px;letter-spacing:.13em}.project-video-link{display:inline-flex;align-items:center;gap:8px;margin-top:17px;color:var(--mint);font-size:10px;font-weight:700}.project-video-link span:first-child{display:grid;place-items:center;width:23px;height:23px;border:1px solid #9df4ca65;border-radius:50%;font-size:8px}.project-video-link:hover{color:#fff}.visual-disclaimer{margin:26px 0 0;color:#78869b;font-size:10px;line-height:1.7}
 .blog-image-wrap{aspect-ratio:16/9}.blog-image-category{left:14px;bottom:13px;padding:6px 9px;border:1px solid #ffffff45;border-radius:30px;background:#0a1121a8;backdrop-filter:blur(8px);font-size:9px}.blog-card-body{padding:21px}.blog-card h2{line-height:1.35}.article-cover{margin:30px 0 34px;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#111a29}.article-cover img{aspect-ratio:16/9;max-height:430px}.article-cover figcaption{padding:10px 14px;color:#7f8da3;font-size:9px}.article-body{padding-top:5px}
 @media(max-width:700px){.project-intro-row{align-items:flex-start;flex-direction:column;gap:12px}.project-image-wrap{aspect-ratio:16/10}.article-cover{margin:22px 0 28px}}
+
+
+/* Admin dashboard: accessible theme controls and clearer typography */
+.admin-shell{font-size:15px}
+.admin-shell .sidebar-label{font-size:11px}
+.admin-shell .admin-sidebar nav button{font-size:14px;padding:13px}
+.admin-shell .admin-sidebar nav button small{font-size:11px}
+.admin-shell .admin-user b{font-size:13px}
+.admin-shell .admin-user small{font-size:11px}
+.admin-shell .signout-button,.admin-shell .site-link{font-size:13px}
+.admin-shell .topbar-kicker{font-size:10px}
+.admin-shell .admin-topbar strong{font-size:19px}
+.admin-shell .live-indicator{font-size:12px}
+.admin-shell .refresh-button,.admin-shell .export-button,.admin-shell .table-footer button{font-size:12px;padding:10px 14px}
+.admin-shell .admin-welcome p{font-size:14px}
+.admin-shell .welcome-date{font-size:12px}
+.admin-shell .admin-stat>span{font-size:13px}
+.admin-shell .admin-stat>strong{font-size:34px}
+.admin-shell .admin-stat>small{font-size:11px}
+.admin-shell .panel-heading h2{font-size:18px}
+.admin-shell .panel-heading p{font-size:12px}
+.admin-shell .panel-heading>button{font-size:12px}
+.admin-shell .recent-info b{font-size:13px}
+.admin-shell .recent-info span,.admin-shell .recent-row time{font-size:11px}
+.admin-shell .status-pill{font-size:11px;padding:6px 10px}
+.admin-shell .summary-number strong{font-size:46px}
+.admin-shell .summary-number span,.admin-shell .summary-list div{font-size:13px}
+.admin-shell .dashboard-note b{font-size:13px}
+.admin-shell .dashboard-note p{font-size:12px}
+.admin-shell .table-tools>input,.admin-shell .table-tools label{font-size:12px}
+.admin-shell .table-tools label input{font-size:12px;padding:10px}
+.admin-shell .admin-table th{font-size:10px;padding:15px 17px}
+.admin-shell .admin-table td{font-size:12px;padding:16px 17px}
+.admin-shell .admin-table td b{font-size:13px}
+.admin-shell .admin-table td small{font-size:11px}
+.admin-shell .table-footer{font-size:11px}
+.admin-shell .admin-empty{font-size:13px}
+.admin-shell .admin-empty b{font-size:15px}
+.admin-shell .admin-empty p{font-size:12px}
+.admin-shell .admin-alert{font-size:13px}
+.admin-shell .admin-footer{font-size:11px}
+.theme-toggle{padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:#ffffff0a;color:#e8edf6;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.theme-toggle:hover{border-color:#a99aff}
+.admin-light{background:#f4f6fb;color:#172033;color-scheme:light}
+.admin-light .admin-sidebar{background:#fff;border-right-color:#dce2ed;box-shadow:4px 0 20px #1d2b4408}
+.admin-light .sidebar-label{color:#718099}
+.admin-light .admin-sidebar nav button{color:#53627a}
+.admin-light .admin-sidebar nav button>span{color:#705be7}
+.admin-light .admin-sidebar nav button.active,.admin-light .admin-sidebar nav button:hover{background:#eeeaff;color:#35267e}
+.admin-light .admin-sidebar nav button.active{box-shadow:inset 3px 0 #8069ef}
+.admin-light .admin-sidebar nav button small{background:#e9edf5;color:#53627a}
+.admin-light .admin-user{border-top-color:#e2e7f0}
+.admin-light .admin-user b{color:#172033}
+.admin-light .admin-user small,.admin-light .site-link{color:#718099}
+.admin-light .signout-button{color:#52617a}
+.admin-light .admin-topbar{background:#fff;border-bottom-color:#e0e5ee}
+.admin-light .topbar-kicker{color:#77849a}
+.admin-light .admin-topbar strong{color:#172033}
+.admin-light .theme-toggle{background:#f2f4fa;color:#26344b;border-color:#d8dfeb}
+.admin-light .refresh-button,.admin-light .export-button,.admin-light .table-footer button{background:#fff;color:#33435b;border-color:#d8dfeb}
+.admin-light .admin-welcome p,.admin-light .welcome-date{color:#65748c}
+.admin-light .admin-stat{background:linear-gradient(145deg,#fff,#f7f8fc);border-color:#e0e5ee;box-shadow:0 5px 18px #24324a08}
+.admin-light .admin-stat>span{color:#586982}
+.admin-light .admin-stat>strong{color:#18243a}
+.admin-light .admin-stat>small{color:#718099}
+.admin-light .stat-icon{color:#725de5}
+.admin-light .admin-panel{background:#fff;border-color:#e0e5ee;box-shadow:0 5px 18px #24324a08}
+.admin-light .panel-heading h2,.admin-light .recent-info b,.admin-light .summary-list b,.admin-light .dashboard-note b{color:#1c2940}
+.admin-light .panel-heading p,.admin-light .recent-info span,.admin-light .recent-row time,.admin-light .summary-number span,.admin-light .summary-list div,.admin-light .dashboard-note p{color:#687891}
+.admin-light .recent-row{border-top-color:#e8ecf3}
+.admin-light .recent-avatar{background:#eeeaff;color:#705be7}
+.admin-light .summary-list{border-top-color:#e5eaf2}
+.admin-light .table-tools>input,.admin-light .table-tools label input{background:#fff;color:#1b2940;border-color:#d9e0eb}
+.admin-light .table-tools label{color:#53627a}
+.admin-light .clear-filters,.admin-light .panel-heading>button{color:#6652d8}
+.admin-light .table-wrap{border-top-color:#e3e8f0}
+.admin-light .admin-table th{background:#f1f4f9;color:#62718a}
+.admin-light .admin-table td{border-top-color:#e8ecf3;color:#53627a}
+.admin-light .admin-table td b{color:#1c2940}
+.admin-light .admin-table td small{color:#718099}
+.admin-light .status-pill{background:#edf0f6;color:#53627a}
+.admin-light .status-pill.new,.admin-light .status-pill.pending{background:#fff3d8;color:#8a5b00}
+.admin-light .status-pill.in_progress,.admin-light .status-pill.review{background:#eeeaff;color:#5c49bf}
+.admin-light .status-pill.completed,.admin-light .status-pill.active,.admin-light .status-pill.paid{background:#e1f7ec;color:#16744b}
+.admin-light .status-pill.archived,.admin-light .status-pill.cancelled,.admin-light .status-pill.overdue{background:#ffebeb;color:#a13e3e}
+.admin-light .progress-cell i{background:#e7ebf2}
+.admin-light .admin-empty{color:#64738a}
+.admin-light .admin-empty b{color:#1c2940}
+.admin-light .admin-empty p{color:#718099}
+.admin-light .admin-alert{background:#fff8e8;border-color:#f0d79a;color:#795500}
+.admin-light .admin-alert button{color:#473300}
+.admin-light .admin-footer{color:#78869b}
+@media(max-width:700px){.admin-shell .admin-topbar strong{font-size:17px}.admin-shell .admin-stat>strong{font-size:29px}.admin-shell .admin-table th{font-size:10px}.admin-shell .admin-table td{font-size:12px}.theme-toggle{padding:8px 10px;font-size:11px}}
