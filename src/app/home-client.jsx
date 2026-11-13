@@ -32,7 +32,7 @@ export default function HomeClient() {
     if (!db) { setFormState('The enquiry form is temporarily unavailable. Please email hello@nexorasolutions.com.'); return; }
     setFormState('sending');
     const payload={name:String(data.get('name')||'').trim(),email:String(data.get('email')||'').trim(),phone:String(data.get('phone')||'').trim(),company:String(data.get('company')||'').trim(),service:String(data.get('service')||''),budget:String(data.get('budget')||''),timeline:String(data.get('timeline')||''),reference_url:String(data.get('reference_url')||'').trim(),feature_notes:String(data.get('feature_notes')||'').trim(),message:String(data.get('message')||'').trim()};
-    const {error}=await db.from('enquiries').insert(payload);
+    const {error}=await db.rpc('submit_nexora_enquiry',{p_name:payload.name,p_email:payload.email,p_phone:payload.phone,p_company:payload.company,p_service:payload.service,p_budget:payload.budget,p_timeline:payload.timeline,p_reference_url:payload.reference_url,p_feature_notes:payload.feature_notes,p_message:payload.message});
     if(error) setFormState('We could not send your enquiry. Please try again or email us directly.');
     else { setFormState('success'); form.reset(); }
   }
