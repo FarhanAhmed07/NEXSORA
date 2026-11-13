@@ -1,0 +1,12 @@
+import Link from 'next/link';
+export function SiteHeader() {
+  return <header className="site-header"><div className="container nav-inner">
+    <Link className="brand" href="/" aria-label="Nexora Solutions home"><span className="brand-mark">N</span><span>NEXORA<span className="brand-dot">.</span></span></Link>
+    <nav className="main-nav" aria-label="Main navigation"><Link href="/#services">Services</Link><Link href="/projects">Work</Link><Link href="/#process">Process</Link><Link href="/blog">Insights</Link></nav>
+    <Link className="button button-small nav-cta" href="/#contact">Start a project <span>↗</span></Link>
+    <details className="mobile-menu"><summary aria-label="Open menu">☰</summary><div className="mobile-menu-panel"><Link href="/#services">Services</Link><Link href="/projects">Work</Link><Link href="/#process">Process</Link><Link href="/blog">Insights</Link><Link href="/#contact">Contact</Link></div></details>
+  </div></header>;
+}
+export function SiteFooter() {
+  return <footer className="site-footer"><div className="container footer-top"><div><Link className="brand" href="/"><span className="brand-mark">N</span><span>NEXORA<span className="brand-dot">.</span></span></Link><p>Thoughtful design. Reliable engineering. Digital products that move businesses forward.</p></div><div className="footer-links"><div><strong>Explore</strong><Link href="/projects">Our work</Link><Link href="/blog">Insights</Link><Link href="/#services">Services</Link></div><div><strong>Start here</strong><Link href="/#contact">Discuss a project</Link><a href="mailto:hello@nexorasolutions.com">Email Nexora</a><Link href="/admin">Admin</Link></div></div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} Nexora Solutions</span><span>Built with clarity, care and code.</span></div></footer>;
+}

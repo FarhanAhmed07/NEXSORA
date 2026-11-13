@@ -1,0 +1,3 @@
+import Link from 'next/link';
+import { SiteHeader, SiteFooter } from './components/site-chrome';
+export default function NotFound(){return <><SiteHeader/><main className="article-page"><div className="container article-container"><div className="eyebrow">404 · PAGE NOT FOUND</div><h1>This page seems to have <span className="text-gradient">moved on.</span></h1><p className="article-intro">The page you are looking for may have moved or no longer exists. Let’s get you back on track.</p><Link className="button" href="/">Back to homepage ↗</Link></div></main><SiteFooter/></>}
