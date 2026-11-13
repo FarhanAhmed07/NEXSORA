@@ -1,4 +1,5 @@
-import Link from 'next/link';\nimport NewsletterForm from './newsletter-form';
+import Link from 'next/link';
+import NewsletterForm from './newsletter-form';
 export function SiteHeader() {
   return <header className="site-header"><div className="container nav-inner">
     <Link className="brand" href="/" aria-label="Nexora Solutions home"><span className="brand-mark">N</span><span>NEXORA<span className="brand-dot">.</span></span></Link>
