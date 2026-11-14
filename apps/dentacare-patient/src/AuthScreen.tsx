@@ -126,7 +126,7 @@ export default function AuthScreen({ onExploreDemo }: { onExploreDemo: () => voi
         </View>
 
         <Pressable style={styles.demoButton} onPress={onExploreDemo}>
-          <Text style={styles.demoButtonText}>Explore app preview</Text>
+          <Text style={styles.demoButtonText}>Continue to patient setup</Text>
         </Pressable>
         <Text style={styles.footer}>DentaCare · A Product by Nexora Solutions</Text>
       </ScrollView>
