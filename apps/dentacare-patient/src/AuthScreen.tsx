@@ -64,7 +64,7 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.brand}>
           <View style={styles.brandMark}><Text style={styles.brandMarkText}>✦</Text></View>
-          <Text style={styles.brandName}>DentaCare</Text>
+          <Text style={styles.brandName}>Taj Dental</Text>
           <Text style={styles.brandCaption}>SMART DENTAL CLINIC</Text>
         </View>
 
@@ -72,7 +72,7 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
           <Text style={styles.eyebrow}>YOUR SMILE, OUR PRIORITY</Text>
           <Text style={styles.title}>{mode === "signin" ? "Welcome back" : "Create your account"}</Text>
           <Text style={styles.subtitle}>
-            {mode === "signin" ? "Sign in to manage your appointments and dental care." : "Join DentaCare to keep your dental health organised."}
+            {mode === "signin" ? "Sign in to manage your appointments and dental care." : "Join Taj Dental to keep your dental health organised."}
           </Text>
         </View>
 
@@ -131,7 +131,7 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
         <Pressable style={styles.staffDemoButton} onPress={onOpenClinicDemo}>
           <Text style={styles.staffDemoText}>Clinic staff workspace preview  →</Text>
         </Pressable>
-        <Text style={styles.footer}>DentaCare · A Product by Nexora Solutions</Text>
+        <Text style={styles.footer}>Taj Dental · A Product by Nexora Solutions</Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
