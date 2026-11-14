@@ -318,10 +318,12 @@ export default function App() {
     setAccountType("checking");
     const resolveAccount = async () => {
       const metadata = session.user.user_metadata || {};
-      await supabase.from("profiles").update({
-        full_name: metadata.full_name || null,
-        phone: metadata.phone || null,
-      }).eq("id", session.user.id);
+      const profilePatch: { full_name?: string; phone?: string } = {};
+      if (typeof metadata.full_name === "string") profilePatch.full_name = metadata.full_name;
+      if (typeof metadata.phone === "string") profilePatch.phone = metadata.phone;
+      if (Object.keys(profilePatch).length > 0) {
+        await supabase.from("profiles").update(profilePatch).eq("id", session.user.id);
+      }
 
       const { data, error } = await supabase
         .from("clinic_memberships")
