@@ -28,7 +28,7 @@ const tabs: { key: TabKey; label: string; icon: string }[] = [
 function BrandMark() {
   return (
     <View style={styles.brandMark}>
-      <Text style={styles.brandMarkText}>✦</Text>
+      <Text style={styles.brandMarkText}>🦷</Text>
     </View>
   );
 }
@@ -49,7 +49,7 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
         <View style={styles.brandRow}>
           <BrandMark />
           <View>
-            <Text style={styles.brandName}>Taj Dental</Text>
+            <Text style={styles.brandName}>TAJ DENTAL</Text>
             <Text style={styles.brandCaption}>SMART DENTAL CLINIC</Text>
           </View>
         </View>
@@ -79,7 +79,7 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
           </View>
           <View style={styles.doctorInfo}>
             <Text style={styles.doctorName}>Dr. Emily Carter</Text>
-            <Text style={styles.doctorSpecialty}>General Dentist · Smile Dental Studio</Text>
+            <Text style={styles.doctorSpecialty}>General Dentist · Taj Dental</Text>
           </View>
         </View>
         <View style={styles.appointmentBottom}>
@@ -165,8 +165,8 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
       <View style={styles.clinicCard}>
         <View style={styles.clinicIcon}><Text style={styles.clinicIconText}>✚</Text></View>
         <View style={styles.clinicCopy}>
-          <Text style={styles.clinicName}>Smile Dental Studio</Text>
-          <Text style={styles.clinicAddress}>F-7 Markaz, Islamabad</Text>
+          <Text style={styles.clinicName}>Taj Dental</Text>
+          <Text style={styles.clinicAddress}>Main clinic · address to be configured</Text>
           <Text style={styles.clinicMeta}>Your sample connected clinic</Text>
         </View>
         <Text style={styles.careArrow}>›</Text>
@@ -212,7 +212,7 @@ function RecordsScreen() {
         <View style={[styles.recordIcon, { backgroundColor: colors.purpleSoft }]}><Text style={styles.recordIconText}>✦</Text></View>
         <View style={styles.recordCopy}>
           <Text style={styles.recordTitle}>Routine dental check-up</Text>
-          <Text style={styles.recordMeta}>Smile Dental Studio · Nov 03, 2026</Text>
+          <Text style={styles.recordMeta}>Taj Dental · Nov 03, 2026</Text>
           <Text style={styles.recordStatus}>Completed · Sample record</Text>
         </View>
         <Text style={styles.careArrow}>›</Text>
