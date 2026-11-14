@@ -49,7 +49,7 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
         <View style={styles.brandRow}>
           <BrandMark />
           <View>
-            <Text style={styles.brandName}>DentaCare</Text>
+            <Text style={styles.brandName}>Taj Dental</Text>
             <Text style={styles.brandCaption}>SMART DENTAL CLINIC</Text>
           </View>
         </View>
@@ -265,7 +265,7 @@ function ProfileScreen() {
           </Pressable>
         ))}
       </View>
-      <Text style={styles.demoNoticeText}>DentaCare · A Product by Nexora Solutions</Text>
+      <Text style={styles.demoNoticeText}>Taj Dental · A Product by Nexora Solutions</Text>
     </ScrollView>
   );
 }
