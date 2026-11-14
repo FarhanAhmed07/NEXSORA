@@ -133,6 +133,44 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
         <Text style={styles.careArrow}>›</Text>
       </View>
 
+      <SectionTitle title="Your smile routine" action="Care hub" />
+      <View style={styles.routineCard}>
+        <View style={styles.routineHeader}>
+          <View>
+            <Text style={styles.routineTitle}>Daily dental habits</Text>
+            <Text style={styles.routineSub}>A simple routine makes a difference</Text>
+          </View>
+          <View style={styles.routineBadge}><Text style={styles.routineBadgeText}>TODAY</Text></View>
+        </View>
+        <View style={styles.routineRow}>
+          <View style={styles.routineCheck}><Text style={styles.routineCheckText}>✓</Text></View>
+          <Text style={styles.routineItem}>Brush twice a day</Text>
+          <Text style={styles.routineDone}>2 / 2</Text>
+        </View>
+        <View style={styles.routineRow}>
+          <View style={styles.routineCheck}><Text style={styles.routineCheckText}>✓</Text></View>
+          <Text style={styles.routineItem}>Floss once a day</Text>
+          <Text style={styles.routineDone}>1 / 1</Text>
+        </View>
+        <View style={styles.routineRow}>
+          <View style={styles.routinePending}><Text style={styles.routinePendingText}>○</Text></View>
+          <Text style={styles.routineItem}>Rinse after meals</Text>
+          <Text style={styles.routinePendingLabel}>Optional</Text>
+        </View>
+        <Text style={styles.routineDisclaimer}>Sample habit tracker · Not medical advice</Text>
+      </View>
+
+      <SectionTitle title="Your clinic" />
+      <View style={styles.clinicCard}>
+        <View style={styles.clinicIcon}><Text style={styles.clinicIconText}>✚</Text></View>
+        <View style={styles.clinicCopy}>
+          <Text style={styles.clinicName}>Smile Dental Studio</Text>
+          <Text style={styles.clinicAddress}>F-7 Markaz, Islamabad</Text>
+          <Text style={styles.clinicMeta}>Your sample connected clinic</Text>
+        </View>
+        <Text style={styles.careArrow}>›</Text>
+      </View>
+
       <View style={styles.demoNotice}>
         <Text style={styles.demoNoticeText}>Preview mode · Sample patient information only</Text>
       </View>
@@ -335,6 +373,28 @@ const styles = StyleSheet.create({
   careTitle: { color: colors.purpleDeep, fontSize: 12, fontWeight: "800" },
   careDescription: { color: "#795B73", fontSize: 10, lineHeight: 15, marginTop: 4 },
   careArrow: { color: colors.pink, fontSize: 25, fontWeight: "400" },
+  routineCard: { backgroundColor: colors.surface, borderRadius: 18, borderWidth: 1, borderColor: colors.border, padding: 16, marginBottom: 24 },
+  routineHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+  routineTitle: { color: colors.text, fontSize: 13, fontWeight: "800" },
+  routineSub: { color: colors.muted, fontSize: 10, marginTop: 4 },
+  routineBadge: { backgroundColor: colors.pinkSoft, paddingHorizontal: 9, paddingVertical: 6, borderRadius: 12 },
+  routineBadgeText: { color: colors.pink, fontSize: 8, fontWeight: "900", letterSpacing: 1 },
+  routineRow: { flexDirection: "row", alignItems: "center", paddingVertical: 9, borderTopWidth: 1, borderTopColor: colors.border, gap: 10 },
+  routineCheck: { width: 22, height: 22, borderRadius: 8, backgroundColor: colors.purpleSoft, alignItems: "center", justifyContent: "center" },
+  routineCheckText: { color: colors.purple, fontSize: 12, fontWeight: "900" },
+  routinePending: { width: 22, height: 22, borderRadius: 8, backgroundColor: "#FFF2E7", alignItems: "center", justifyContent: "center" },
+  routinePendingText: { color: "#D97706", fontSize: 13 },
+  routineItem: { flex: 1, color: colors.text, fontSize: 11, fontWeight: "700" },
+  routineDone: { color: colors.success, fontSize: 10, fontWeight: "800" },
+  routinePendingLabel: { color: colors.muted, fontSize: 9 },
+  routineDisclaimer: { color: colors.muted, fontSize: 8, marginTop: 10 },
+  clinicCard: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: colors.surface, borderRadius: 17, borderWidth: 1, borderColor: colors.border, padding: 14, marginBottom: 17 },
+  clinicIcon: { width: 42, height: 42, borderRadius: 14, backgroundColor: colors.purpleSoft, alignItems: "center", justifyContent: "center" },
+  clinicIconText: { color: colors.purple, fontSize: 20, fontWeight: "900" },
+  clinicCopy: { flex: 1 },
+  clinicName: { color: colors.text, fontSize: 12, fontWeight: "800" },
+  clinicAddress: { color: colors.muted, fontSize: 10, marginTop: 4 },
+  clinicMeta: { color: colors.pink, fontSize: 9, fontWeight: "700", marginTop: 5 },
   demoNotice: { alignItems: "center", paddingVertical: 7 },
   demoNoticeText: { color: colors.muted, fontSize: 9, textAlign: "center" },
   screenTitle: { color: colors.text, fontSize: 28, fontWeight: "800", letterSpacing: -0.8 },
