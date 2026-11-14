@@ -1,145 +1,236 @@
-import React, { useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { colors, radius } from "./theme";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { colors } from "./theme";
+import { supabase } from "./supabase";
 
-type Patient = { id: string; name: string; age: number; phone: string; lastVisit: string; nextVisit: string; status: string; initials: string; concern: string };
-const patients: Patient[] = [
-  { id: "DC-1048", name: "Ava Thompson", age: 29, phone: "+1 202 555 0148", lastVisit: "Nov 03, 2026", nextVisit: "Nov 17 · 10:30 AM", status: "Active", initials: "AT", concern: "Routine check-up" },
-  { id: "DC-1047", name: "Noah Williams", age: 41, phone: "+1 202 555 0147", lastVisit: "Oct 28, 2026", nextVisit: "Nov 17 · 11:00 AM", status: "Follow-up", initials: "NW", concern: "Tooth sensitivity" },
-  { id: "DC-1046", name: "Mia Johnson", age: 35, phone: "+1 202 555 0146", lastVisit: "Oct 21, 2026", nextVisit: "Not scheduled", status: "Active", initials: "MJ", concern: "Cleaning & prevention" },
-  { id: "DC-1045", name: "Ethan Brown", age: 52, phone: "+1 202 555 0145", lastVisit: "Sep 19, 2026", nextVisit: "Not scheduled", status: "Needs review", initials: "EB", concern: "Crown consultation" },
-  { id: "DC-1044", name: "Isabella Davis", age: 24, phone: "+1 202 555 0144", lastVisit: "Sep 12, 2026", nextVisit: "Nov 19 · 09:15 AM", status: "Active", initials: "ID", concern: "Braces consultation" }
-];
+type Patient = {
+  id: string;
+  patient_number: string;
+  full_name: string;
+  phone: string | null;
+  email: string | null;
+  status: "active" | "inactive" | "archived";
+  created_at: string;
+};
 
-export default function PatientManagementScreen({ onBack }: { onBack: () => void }) {
+export default function PatientManagementScreen({ onBack, clinicId }: { onBack: () => void; clinicId: string | null }) {
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("All");
   const [selected, setSelected] = useState<Patient | null>(null);
-  const filtered = useMemo(() => patients.filter(p => (filter === "All" || p.status === filter) && (p.name.toLowerCase().includes(query.toLowerCase()) || p.id.toLowerCase().includes(query.toLowerCase()))), [query, filter]);
+  const [adding, setAdding] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
 
-  if (selected) return (
-    <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={() => setSelected(null)} style={styles.back}><Text style={styles.backText}>‹  All patients</Text></Pressable>
-        <View style={styles.profile}>
-          <View style={styles.avatar}><Text style={styles.avatarText}>{selected.initials}</Text></View>
-          <Text style={styles.name}>{selected.name}</Text>
-          <Text style={styles.muted}>{selected.id}  ·  {selected.age} years</Text>
-          <View style={styles.status}><Text style={styles.statusText}>{selected.status.toUpperCase()}</Text></View>
-        </View>
-        <View style={styles.actionRow}>
-          <Pressable style={styles.action} onPress={() => Alert.alert("Call patient", "Calling will be enabled when clinic contact services are connected.")}><Text style={styles.actionIcon}>☎</Text><Text style={styles.actionLabel}>Call</Text></Pressable>
-          <Pressable style={styles.action} onPress={() => Alert.alert("Message patient", "Secure messaging will be connected in a later phase.")}><Text style={styles.actionIcon}>✉</Text><Text style={styles.actionLabel}>Message</Text></Pressable>
-          <Pressable style={styles.action} onPress={() => Alert.alert("Edit profile", "Patient editing will be enabled after secure staff access is connected.")}><Text style={styles.actionIcon}>✎</Text><Text style={styles.actionLabel}>Edit</Text></Pressable>
-        </View>
-        <Text style={styles.section}>Contact information</Text>
-        <View style={styles.card}><Info label="Phone number" value={selected.phone} /><Info label="Patient ID" value={selected.id} /><Info label="Primary concern" value={selected.concern} /></View>
-        <Text style={styles.section}>Care overview</Text>
-        <View style={styles.card}><Info label="Last visit" value={selected.lastVisit} /><Info label="Next appointment" value={selected.nextVisit} /><Info label="Patient status" value={selected.status} /></View>
-        <Text style={styles.section}>Clinical timeline</Text>
-        <View style={styles.timeline}>
-          <TimelineItem date={selected.lastVisit} title="Dental consultation" note="Visit record · Sample data" />
-          <TimelineItem date="Oct 10, 2026" title="Treatment plan reviewed" note="Clinical note · Sample data" />
-          <TimelineItem date="Sep 02, 2026" title="Patient profile created" note="Registration · Sample data" />
-        </View>
-        <View style={styles.notice}><Text style={styles.noticeTitle}>Privacy reminder</Text><Text style={styles.noticeText}>This is fictional demo information. Real patient charts must only be accessed by verified staff with the correct clinic permissions.</Text></View>
-      </ScrollView>
+  const loadPatients = useCallback(async () => {
+    if (!supabase || !clinicId) {
+      setPatients([]);
+      setLoading(false);
+      return;
+    }
+    setError("");
+    const { data, error: loadError } = await supabase
+      .from("patients")
+      .select("id, patient_number, full_name, phone, email, status, created_at")
+      .eq("clinic_id", clinicId)
+      .order("created_at", { ascending: false })
+      .limit(250);
+    if (loadError) setError(loadError.message);
+    else setPatients((data || []) as Patient[]);
+    setLoading(false);
+  }, [clinicId]);
+
+  useEffect(() => { loadPatients(); }, [loadPatients]);
+
+  const refresh = async () => {
+    setRefreshing(true);
+    await loadPatients();
+    setRefreshing(false);
+  };
+
+  const filtered = useMemo(() => patients.filter(patient =>
+    patient.full_name.toLowerCase().includes(query.toLowerCase()) ||
+    patient.patient_number.toLowerCase().includes(query.toLowerCase()) ||
+    (patient.phone || "").includes(query)
+  ), [patients, query]);
+
+  const createPatient = async () => {
+    if (!supabase || !clinicId) return;
+    if (!name.trim()) {
+      setError("Patient name is required.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    const { data: userResult } = await supabase.auth.getUser();
+    const userId = userResult.user?.id;
+    if (!userId) {
+      setSaving(false);
+      setError("Your session has expired. Please sign in again.");
+      return;
+    }
+    const patientNumber = "TD-" + Date.now().toString(36).toUpperCase();
+    const { data, error: insertError } = await supabase.from("patients").insert({
+      clinic_id: clinicId,
+      patient_number: patientNumber,
+      full_name: name.trim(),
+      phone: phone.trim() || null,
+      email: email.trim() || null,
+      address: address.trim() || null,
+      status: "active",
+      created_by: userId
+    }).select("id, patient_number, full_name, phone, email, status, created_at").single();
+    setSaving(false);
+    if (insertError) {
+      setError(insertError.message);
+      return;
+    }
+    setPatients(current => [data as Patient, ...current]);
+    setName("");
+    setPhone("");
+    setEmail("");
+    setAddress("");
+    setAdding(false);
+    setSelected(data as Patient);
+  };
+
+  const updateStatus = async (patient: Patient, status: Patient["status"]) => {
+    if (!supabase || !clinicId) return;
+    const { error: updateError } = await supabase.from("patients").update({ status }).eq("id", patient.id).eq("clinic_id", clinicId);
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+    const updated = { ...patient, status };
+    setPatients(current => current.map(item => item.id === patient.id ? updated : item));
+    setSelected(updated);
+  };
+
+  const Field = ({ label, value, onChangeText, placeholder, keyboardType = "default" }: { label: string; value: string; onChangeText: (value: string) => void; placeholder: string; keyboardType?: "default" | "email-address" | "phone-pad" }) => (
+    <View style={styles.field}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor={colors.muted} keyboardType={keyboardType} autoCapitalize={keyboardType === "email-address" ? "none" : "words"} style={styles.input} />
     </View>
   );
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Pressable onPress={onBack} style={styles.back}><Text style={styles.backText}>‹  Clinic workspace</Text></Pressable>
-        <Text style={styles.eyebrow}>CLINIC MANAGEMENT</Text>
-        <Text style={styles.heading}>Patients</Text>
-        <Text style={styles.subtitle}>Manage patient profiles, appointments and care history.</Text>
-        <View style={styles.stats}>
-          <Stat value="128" label="Total patients" />
-          <Stat value="18" label="Today" />
-          <Stat value="04" label="Need review" />
-        </View>
-        <View style={styles.search}><Text style={styles.searchIcon}>⌕</Text><TextInput value={query} onChangeText={setQuery} placeholder="Search name or patient ID" placeholderTextColor={colors.muted} style={styles.searchInput} /></View>
-        <View style={styles.filters}>{["All", "Active", "Follow-up", "Needs review"].map(item => <Pressable key={item} onPress={() => setFilter(item)} style={[styles.filter, filter === item && styles.filterActive]}><Text style={[styles.filterText, filter === item && styles.filterTextActive]}>{item}</Text></Pressable>)}</View>
-        <View style={styles.listHead}><Text style={styles.section}>Patient directory</Text><Text style={styles.count}>{filtered.length} records</Text></View>
-        {filtered.map(p => <Pressable key={p.id} style={styles.patient} onPress={() => setSelected(p)}>
-          <View style={styles.patientAvatar}><Text style={styles.patientAvatarText}>{p.initials}</Text></View>
-          <View style={styles.patientCopy}><Text style={styles.patientName}>{p.name}</Text><Text style={styles.patientMeta}>{p.id}  ·  Last visit {p.lastVisit}</Text><Text style={styles.patientNext}>Next: {p.nextVisit}</Text></View>
-          <View style={styles.patientRight}><View style={[styles.dot, { backgroundColor: p.status === "Needs review" ? colors.warning : p.status === "Follow-up" ? colors.pink : colors.success }]} /><Text style={styles.patientStatus}>{p.status}</Text><Text style={styles.chevron}>›</Text></View>
-        </Pressable>)}
-        {filtered.length === 0 && <View style={styles.empty}><Text style={styles.emptyTitle}>No patients found</Text><Text style={styles.muted}>Try another name or filter.</Text></View>}
-        <Pressable style={styles.addButton} onPress={() => Alert.alert("Register patient", "The registration form will be connected after the secure clinic workflow is approved.")}><Text style={styles.addText}>＋  Register new patient</Text></Pressable>
-        <Text style={styles.footer}>DEMO DATA ONLY · DentaCare by Nexora Solutions</Text>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.purple} />}>
+        <Pressable onPress={() => selected || adding ? (setSelected(null), setAdding(false)) : onBack()} style={styles.back}><Text style={styles.backText}>‹  {selected || adding ? "Patient directory" : "Clinic workspace"}</Text></Pressable>
+        <Text style={styles.eyebrow}>TAJ DENTAL · CLINIC MANAGEMENT</Text>
+        <Text style={styles.title}>{adding ? "Register patient" : selected ? "Patient profile" : "Patients"}</Text>
+        <Text style={styles.subtitle}>{adding ? "Add a patient to this clinic's secure records." : selected ? "Patient details stored in this clinic workspace." : "Search and manage your clinic's patient directory."}</Text>
+
+        {!clinicId ? <View style={styles.notice}><Text style={styles.noticeText}>Sign in with a clinic staff account to access patient records. Demo patient data is not displayed.</Text></View> : null}
+        {error ? <View style={styles.error}><Text style={styles.errorText}>{error}</Text></View> : null}
+        {clinicId && loading ? <View style={styles.loading}><ActivityIndicator color={colors.purple} /><Text style={styles.meta}>Loading patient records…</Text></View> : null}
+
+        {clinicId && !loading && adding ? <>
+          <View style={styles.formCard}>
+            <Field label="Full name *" value={name} onChangeText={setName} placeholder="Patient full name" />
+            <Field label="Phone number" value={phone} onChangeText={setPhone} placeholder="+92 3XX XXXXXXX" keyboardType="phone-pad" />
+            <Field label="Email address" value={email} onChangeText={setEmail} placeholder="patient@example.com" keyboardType="email-address" />
+            <Field label="Address" value={address} onChangeText={setAddress} placeholder="Patient address" />
+            <Pressable disabled={saving} style={[styles.primary, saving && styles.disabled]} onPress={createPatient}><Text style={styles.primaryText}>{saving ? "Saving patient…" : "Save patient record"}</Text></Pressable>
+          </View>
+        </> : null}
+
+        {clinicId && !loading && selected && !adding ? <>
+          <View style={styles.profileCard}>
+            <View style={styles.avatar}><Text style={styles.avatarText}>{selected.full_name.split(" ").map(part => part[0]).slice(0, 2).join("").toUpperCase()}</Text></View>
+            <Text style={styles.patientName}>{selected.full_name}</Text>
+            <Text style={styles.meta}>{selected.patient_number}</Text>
+            <Text style={[styles.status, selected.status === "active" ? styles.statusActive : styles.statusInactive]}>{selected.status.toUpperCase()}</Text>
+          </View>
+          <View style={styles.card}>
+            <Info label="Phone" value={selected.phone || "Not provided"} />
+            <Info label="Email" value={selected.email || "Not provided"} />
+            <Info label="Registered" value={new Date(selected.created_at).toLocaleDateString()} />
+            <Info label="Patient ID" value={selected.patient_number} />
+          </View>
+          {selected.status === "active" ? <Pressable style={styles.secondary} onPress={() => updateStatus(selected, "inactive")}><Text style={styles.secondaryText}>Mark inactive</Text></Pressable> : <Pressable style={styles.primary} onPress={() => updateStatus(selected, "active")}><Text style={styles.primaryText}>Reactivate patient</Text></Pressable>}
+          <Text style={styles.privacy}>Clinical notes, diagnoses and medical history are kept in separate permission-controlled modules.</Text>
+        </> : null}
+
+        {clinicId && !loading && !selected && !adding ? <>
+          <View style={styles.stats}>
+            <View style={styles.stat}><Text style={styles.statValue}>{patients.length}</Text><Text style={styles.statLabel}>Total records</Text></View>
+            <View style={styles.stat}><Text style={styles.statValue}>{patients.filter(item => item.status === "active").length}</Text><Text style={styles.statLabel}>Active</Text></View>
+            <View style={styles.stat}><Text style={styles.statValue}>{patients.filter(item => item.status !== "active").length}</Text><Text style={styles.statLabel}>Inactive</Text></View>
+          </View>
+          <TextInput value={query} onChangeText={setQuery} placeholder="Search name, patient ID or phone" placeholderTextColor={colors.muted} style={styles.search} />
+          <Pressable style={styles.primary} onPress={() => setAdding(true)}><Text style={styles.primaryText}>＋  Register new patient</Text></Pressable>
+          {filtered.map(patient => <Pressable key={patient.id} style={styles.patientRow} onPress={() => setSelected(patient)}>
+            <View style={styles.rowAvatar}><Text style={styles.rowAvatarText}>{patient.full_name.split(" ").map(part => part[0]).slice(0, 2).join("").toUpperCase()}</Text></View>
+            <View style={styles.rowCopy}><Text style={styles.rowName}>{patient.full_name}</Text><Text style={styles.meta}>{patient.patient_number} · {patient.phone || "No phone"}</Text></View>
+            <Text style={[styles.rowStatus, patient.status === "active" ? styles.activeText : styles.inactiveText]}>{patient.status}</Text>
+          </Pressable>)}
+          {filtered.length === 0 ? <View style={styles.empty}><Text style={styles.emptyTitle}>No patient records yet</Text><Text style={styles.meta}>Register your first patient to begin.</Text></View> : null}
+        </> : null}
+        <Text style={styles.footer}>TAJ DENTAL · A Product by Nexora Solutions</Text>
       </ScrollView>
     </View>
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) { return <View style={styles.stat}><Text style={styles.statValue}>{value}</Text><Text style={styles.statLabel}>{label}</Text></View>; }
-function Info({ label, value }: { label: string; value: string }) { return <View style={styles.info}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{value}</Text></View>; }
-function TimelineItem({ date, title, note }: { date: string; title: string; note: string }) { return <View style={styles.timelineItem}><View style={styles.timelineDot} /><View style={styles.timelineCopy}><Text style={styles.timelineTitle}>{title}</Text><Text style={styles.timelineNote}>{date}  ·  {note}</Text></View></View>; }
+function Info({ label, value }: { label: string; value: string }) {
+  return <View style={styles.infoRow}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{value}</Text></View>;
+}
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 20, paddingTop: 48, paddingBottom: 34 },
-  back: { alignSelf: "flex-start", paddingVertical: 7, marginBottom: 16 },
-  backText: { color: colors.purple, fontSize: 12, fontWeight: "900" },
-  eyebrow: { color: colors.pink, fontSize: 9, fontWeight: "900", letterSpacing: 1.6, marginBottom: 7 },
-  heading: { color: colors.text, fontSize: 28, fontWeight: "900", letterSpacing: -0.8 },
-  subtitle: { color: colors.muted, fontSize: 11, lineHeight: 17, marginTop: 6, marginBottom: 19 },
-  stats: { flexDirection: "row", gap: 8, marginBottom: 18 },
-  stat: { flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 15, padding: 12 },
-  statValue: { color: colors.purple, fontSize: 21, fontWeight: "900" },
-  statLabel: { color: colors.muted, fontSize: 8, marginTop: 4 },
-  search: { flexDirection: "row", alignItems: "center", backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 14, paddingHorizontal: 13, marginBottom: 12 },
-  searchIcon: { color: colors.pink, fontSize: 22, marginRight: 8 },
-  searchInput: { flex: 1, height: 45, color: colors.text, fontSize: 11 },
-  filters: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginBottom: 22 },
-  filter: { borderWidth: 1, borderColor: colors.border, borderRadius: 20, paddingHorizontal: 11, paddingVertical: 8, backgroundColor: colors.surface },
-  filterActive: { backgroundColor: colors.purpleDark, borderColor: colors.purpleDark },
-  filterText: { color: colors.muted, fontSize: 9, fontWeight: "800" },
-  filterTextActive: { color: "#FFFFFF" },
-  listHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 },
-  section: { color: colors.text, fontSize: 14, fontWeight: "900", marginTop: 7, marginBottom: 11 },
-  count: { color: colors.muted, fontSize: 9 },
-  patient: { flexDirection: "row", alignItems: "center", backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 12, marginBottom: 9, gap: 10 },
-  patientAvatar: { width: 39, height: 39, borderRadius: 14, backgroundColor: colors.purpleSoft, alignItems: "center", justifyContent: "center" },
-  patientAvatarText: { color: colors.purpleDark, fontSize: 10, fontWeight: "900" },
-  patientCopy: { flex: 1 },
-  patientName: { color: colors.text, fontSize: 11, fontWeight: "900" },
-  patientMeta: { color: colors.muted, fontSize: 8, marginTop: 4 },
-  patientNext: { color: colors.purple, fontSize: 8, fontWeight: "700", marginTop: 5 },
-  patientRight: { alignItems: "flex-end", gap: 4 },
-  dot: { width: 6, height: 6, borderRadius: 4 },
-  patientStatus: { color: colors.muted, fontSize: 7, fontWeight: "800" },
-  chevron: { color: colors.pink, fontSize: 19 },
-  empty: { alignItems: "center", padding: 28, backgroundColor: colors.surface, borderRadius: 15 },
-  emptyTitle: { color: colors.text, fontWeight: "900", marginBottom: 5 },
-  addButton: { backgroundColor: colors.pink, borderRadius: 14, padding: 15, alignItems: "center", marginTop: 8 },
-  addText: { color: "#FFFFFF", fontSize: 11, fontWeight: "900" },
-  footer: { color: colors.muted, fontSize: 8, textAlign: "center", marginTop: 20, letterSpacing: 0.6 },
-  profile: { alignItems: "center", backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, padding: 22, marginBottom: 14 },
-  avatar: { width: 66, height: 66, borderRadius: 23, backgroundColor: colors.pinkSoft, alignItems: "center", justifyContent: "center", marginBottom: 11 },
-  avatarText: { color: colors.purpleDark, fontSize: 20, fontWeight: "900" },
-  name: { color: colors.text, fontSize: 18, fontWeight: "900" },
-  muted: { color: colors.muted, fontSize: 10, marginTop: 5 },
-  status: { backgroundColor: colors.successSoft, borderRadius: 20, paddingHorizontal: 11, paddingVertical: 6, marginTop: 10 },
-  statusText: { color: colors.success, fontSize: 8, fontWeight: "900", letterSpacing: 0.8 },
-  actionRow: { flexDirection: "row", gap: 9, marginBottom: 19 },
-  action: { flex: 1, alignItems: "center", backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 14, padding: 12 },
-  actionIcon: { color: colors.purple, fontSize: 17, fontWeight: "900" },
-  actionLabel: { color: colors.text, fontSize: 9, fontWeight: "800", marginTop: 5 },
-  card: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 16, paddingHorizontal: 14, marginBottom: 15 },
-  info: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border },
-  infoLabel: { color: colors.muted, fontSize: 8, marginBottom: 4 },
-  infoValue: { color: colors.text, fontSize: 11, fontWeight: "800" },
-  timeline: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 14 },
-  timelineItem: { flexDirection: "row", gap: 10, paddingVertical: 9 },
-  timelineDot: { width: 8, height: 8, borderRadius: 5, backgroundColor: colors.pink, marginTop: 3 },
-  timelineCopy: { flex: 1 },
-  timelineTitle: { color: colors.text, fontSize: 10, fontWeight: "900" },
-  timelineNote: { color: colors.muted, fontSize: 8, marginTop: 4 },
-  notice: { backgroundColor: colors.purpleSoft, borderRadius: 15, padding: 13, marginTop: 15 },
-  noticeTitle: { color: colors.purpleDark, fontSize: 10, fontWeight: "900", marginBottom: 5 },
-  noticeText: { color: colors.purpleDark, fontSize: 8, lineHeight: 13 }
+  content: { padding: 20, paddingTop: 48, paddingBottom: 32 },
+  back: { marginBottom: 20 },
+  backText: { color: colors.purple, fontSize: 12, fontWeight: "800" },
+  eyebrow: { color: colors.pink, fontSize: 9, fontWeight: "900", letterSpacing: 1.2, marginBottom: 8 },
+  title: { color: colors.text, fontSize: 26, fontWeight: "900" },
+  subtitle: { color: colors.muted, fontSize: 11, lineHeight: 17, marginTop: 7, marginBottom: 17 },
+  stats: { flexDirection: "row", gap: 8, marginBottom: 14 },
+  stat: { flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 14, padding: 13 },
+  statValue: { color: colors.purpleDark, fontSize: 21, fontWeight: "900" },
+  statLabel: { color: colors.muted, fontSize: 9, marginTop: 4 },
+  search: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 13, paddingVertical: 12, color: colors.text, fontSize: 11, marginBottom: 12 },
+  primary: { backgroundColor: colors.pink, borderRadius: 13, paddingVertical: 14, alignItems: "center", marginBottom: 14 },
+  primaryText: { color: "#FFFFFF", fontSize: 11, fontWeight: "900" },
+  secondary: { borderWidth: 1, borderColor: colors.border, borderRadius: 13, paddingVertical: 14, alignItems: "center", marginTop: 14 },
+  secondaryText: { color: colors.purpleDark, fontSize: 11, fontWeight: "900" },
+  formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 15 },
+  field: { marginBottom: 13 },
+  label: { color: colors.text, fontSize: 10, fontWeight: "800", marginBottom: 6 },
+  input: { borderWidth: 1, borderColor: colors.border, borderRadius: 11, paddingHorizontal: 12, paddingVertical: 12, color: colors.text, fontSize: 11 },
+  patientRow: { flexDirection: "row", alignItems: "center", gap: 11, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 14, padding: 12, marginBottom: 8 },
+  rowAvatar: { width: 39, height: 39, borderRadius: 13, backgroundColor: colors.purpleSoft, alignItems: "center", justifyContent: "center" },
+  rowAvatarText: { color: colors.purpleDark, fontSize: 10, fontWeight: "900" },
+  rowCopy: { flex: 1 },
+  rowName: { color: colors.text, fontSize: 11, fontWeight: "900" },
+  rowStatus: { fontSize: 9, fontWeight: "900" },
+  activeText: { color: colors.success },
+  inactiveText: { color: colors.muted },
+  profileCard: { alignItems: "center", backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 20, marginBottom: 12 },
+  avatar: { width: 58, height: 58, borderRadius: 20, backgroundColor: colors.pinkSoft, alignItems: "center", justifyContent: "center", marginBottom: 10 },
+  avatarText: { color: colors.purpleDark, fontSize: 17, fontWeight: "900" },
+  patientName: { color: colors.text, fontSize: 15, fontWeight: "900" },
+  status: { fontSize: 8, fontWeight: "900", borderRadius: 10, overflow: "hidden", paddingHorizontal: 10, paddingVertical: 6, marginTop: 9 },
+  statusActive: { color: "#18794E", backgroundColor: "#E4F7ED" },
+  statusInactive: { color: colors.muted, backgroundColor: colors.purpleSoft },
+  card: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 15, paddingHorizontal: 14 },
+  infoRow: { flexDirection: "row", justifyContent: "space-between", gap: 12, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: colors.border },
+  infoLabel: { color: colors.muted, fontSize: 10 },
+  infoValue: { color: colors.text, fontSize: 10, fontWeight: "800", flexShrink: 1, textAlign: "right" },
+  notice: { backgroundColor: colors.purpleSoft, padding: 14, borderRadius: 13 },
+  noticeText: { color: colors.purpleDark, fontSize: 10, lineHeight: 15 },
+  error: { backgroundColor: "#FEE4E2", padding: 13, borderRadius: 12, marginBottom: 14 },
+  errorText: { color: "#B42318", fontSize: 10, lineHeight: 15 },
+  loading: { alignItems: "center", paddingVertical: 30, gap: 9 },
+  empty: { alignItems: "center", paddingVertical: 35 },
+  emptyTitle: { color: colors.text, fontSize: 14, fontWeight: "900", marginBottom: 6 },
+  meta: { color: colors.muted, fontSize: 10, marginTop: 5 },
+  disabled: { opacity: 0.55 },
+  privacy: { color: colors.muted, fontSize: 9, lineHeight: 14, marginTop: 13 },
+  footer: { color: colors.muted, fontSize: 8, textAlign: "center", marginTop: 20 }
 });
