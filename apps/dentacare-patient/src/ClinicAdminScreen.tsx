@@ -4,8 +4,8 @@ import { colors } from "./theme";
 
 type Section = "Branches" | "Staff & roles" | "Services" | "Settings";
 const branchData = [
-  { name: "Smile Dental Studio", address: "F-7 Markaz, Islamabad", status: "Main branch", staff: "8 staff" },
-  { name: "Nexora Dental Care", address: "Blue Area, Islamabad", status: "Branch", staff: "5 staff" }
+  { name: "Taj Dental", address: "Main clinic · address to be configured", status: "Main branch", staff: "8 staff" },
+  { name: "Taj Dental · Branch 02 (Preview)", address: "Branch 02 · address to be configured", status: "Branch", staff: "5 staff" }
 ];
 const staffData = [
   { initials: "EC", name: "Dr. Emily Carter", role: "Clinic dentist", access: "Doctor" },
@@ -23,7 +23,7 @@ const serviceData = [
 
 export default function ClinicAdminScreen({ onBack }: { onBack: () => void }) {
   const [section, setSection] = useState<Section>("Branches");
-  const [clinicName, setClinicName] = useState("Smile Dental Studio");
+  const [clinicName, setClinicName] = useState("Taj Dental");
   const [reminders, setReminders] = useState(true);
   const [twoFactor, setTwoFactor] = useState(true);
   const [onlineBooking, setOnlineBooking] = useState(false);
@@ -53,7 +53,7 @@ export default function ClinicAdminScreen({ onBack }: { onBack: () => void }) {
         <View style={styles.info}><Text style={styles.infoTitle}>Security & privacy</Text><Text style={styles.infoText}>Live access controls, consent retention, audit history and clinic data isolation require backend configuration and must be reviewed before activation.</Text></View>
       </>}
       <View style={styles.footerNote}><Text style={styles.footerTitle}>Preview only</Text><Text style={styles.footerText}>Changes on this screen are local demo interactions. Nothing is saved to a real clinic or database.</Text></View>
-      <Text style={styles.footer}>DentaCare · A Product by Nexora Solutions</Text>
+      <Text style={styles.footer}>TAJ DENTAL · A Product by Nexora Solutions</Text>
     </ScrollView></View>
   );
 }
