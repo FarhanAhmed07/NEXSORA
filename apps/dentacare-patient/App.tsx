@@ -293,6 +293,7 @@ export default function App() {
     supabase.auth.getSession().then(({ data }) => {
       if (mounted) {
         setSession(data.session);
+        setAccountType(data.session ? "checking" : "signedout");
         setAuthReady(true);
       }
     }).catch(() => {
@@ -300,7 +301,7 @@ export default function App() {
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
-      if (!nextSession) setAccountType("signedout");
+      setAccountType(nextSession ? "checking" : "signedout");
     });
     return () => {
       mounted = false;
@@ -389,7 +390,7 @@ export default function App() {
     );
   }
 
-  if (session && accountType === "staff" || demoStaff) {
+  if ((session && accountType === "staff") || demoStaff) {
     return (
       <View style={styles.app}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
@@ -407,7 +408,7 @@ export default function App() {
     );
   }
 
-  if (session && accountType === "patient" || demoPatient) {
+  if ((session && accountType === "patient") || demoPatient) {
     const content = () => {
       switch (activeTab) {
         case "appointments":
