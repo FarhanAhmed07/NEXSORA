@@ -10,12 +10,12 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const db = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 const services = [
-  { id: 'website', label: 'Website / web application', low: 900, high: 2800 },
-  { id: 'mobile', label: 'Mobile application', low: 2500, high: 8000 },
-  { id: 'ai', label: 'AI assistant / automation', low: 1600, high: 6500 },
-  { id: 'software', label: 'Custom business software', low: 2200, high: 9500 },
-  { id: 'design', label: 'UI/UX design', low: 700, high: 2600 },
-  { id: 'saas', label: 'SaaS product / platform', low: 5000, high: 16000 }
+  { id: 'website', label: 'Website / web application', low: 500, high: 1800 },
+  { id: 'mobile', label: 'Mobile application', low: 1500, high: 5000 },
+  { id: 'ai', label: 'AI assistant / automation', low: 900, high: 3500 },
+  { id: 'software', label: 'Custom business software', low: 1200, high: 5500 },
+  { id: 'design', label: 'UI/UX design', low: 400, high: 1600 },
+  { id: 'saas', label: 'SaaS product / platform', low: 3000, high: 10000 }
 ];
 const complexity = {
   starter: { label: 'Starter', multiplier: 0.85 },
