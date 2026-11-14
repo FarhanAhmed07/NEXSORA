@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { colors, radius } from "./src/theme";
 import AuthScreen from "./src/AuthScreen";
+import OnboardingScreen from "./src/OnboardingScreen";
 
 type TabKey = "home" | "appointments" | "records" | "profile";
 
@@ -283,12 +284,22 @@ function ProfileScreen() {
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const [showApp, setShowApp] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  if (showOnboarding) {
+    return (
+      <View style={styles.app}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        <OnboardingScreen onContinue={() => { setShowOnboarding(false); setShowApp(true); }} />
+      </View>
+    );
+  }
 
   if (!showApp) {
     return (
       <View style={styles.app}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-        <AuthScreen onExploreDemo={() => setShowApp(true)} />
+        <AuthScreen onExploreDemo={() => setShowOnboarding(true)} />
       </View>
     );
   }
