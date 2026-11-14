@@ -12,6 +12,7 @@ import { colors, radius } from "./src/theme";
 import AuthScreen from "./src/AuthScreen";
 import OnboardingScreen from "./src/OnboardingScreen";
 import CareHubScreen from "./src/CareHubScreen";
+import AppointmentBookingScreen from "./src/AppointmentBookingScreen";
 
 type TabKey = "home" | "appointments" | "records" | "care" | "profile";
 
@@ -139,64 +140,7 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
   );
 }
 
-function AppointmentsScreen() {
-  const [doctor, setDoctor] = useState("Dr. Emily Carter");
-  const [day, setDay] = useState("Tue, 17");
-  const [time, setTime] = useState("10:30 AM");
-  const days = ["Mon, 16", "Tue, 17", "Wed, 18", "Thu, 19"];
-  const times = ["9:00 AM", "10:30 AM", "12:00 PM", "2:30 PM"];
-
-  return (
-    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-      <Text style={styles.eyebrow}>YOUR VISITS</Text>
-      <Text style={styles.screenTitle}>Appointments</Text>
-      <Text style={styles.screenSubtitle}>Book a visit or keep track of your dental care.</Text>
-
-      <View style={styles.nextVisitCard}>
-        <Text style={styles.smallWhiteLabel}>NEXT APPOINTMENT</Text>
-        <Text style={styles.nextVisitDate}>Tuesday, November 17</Text>
-        <Text style={styles.nextVisitMeta}>10:30 AM  ·  Dr. Emily Carter</Text>
-        <View style={styles.confirmedPill}><Text style={styles.confirmedText}>●  Confirmed · Sample</Text></View>
-      </View>
-
-      <SectionTitle title="Book a new appointment" />
-      <Text style={styles.formLabel}>Choose your dentist</Text>
-      <View style={styles.doctorChoice}>
-        <View style={styles.doctorAvatar}><Text style={styles.doctorAvatarText}>EC</Text></View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.doctorName}>Dr. Emily Carter</Text>
-          <Text style={styles.doctorSpecialty}>General Dentist</Text>
-        </View>
-        <Text style={styles.selectedCheck}>✓</Text>
-      </View>
-      <Text style={styles.formLabel}>Select a date</Text>
-      <View style={styles.choiceRow}>
-        {days.map((item) => (
-          <Pressable key={item} onPress={() => setDay(item)} style={[styles.choiceChip, day === item && styles.choiceChipSelected]}>
-            <Text style={[styles.choiceText, day === item && styles.choiceTextSelected]}>{item}</Text>
-          </Pressable>
-        ))}
-      </View>
-      <Text style={styles.formLabel}>Available time</Text>
-      <View style={styles.timeGrid}>
-        {times.map((item) => (
-          <Pressable key={item} onPress={() => setTime(item)} style={[styles.timeChip, time === item && styles.timeChipSelected]}>
-            <Text style={[styles.choiceText, time === item && styles.choiceTextSelected]}>{item}</Text>
-          </Pressable>
-        ))}
-      </View>
-      <Pressable
-        style={styles.primaryButton}
-        onPress={() => Alert.alert("Booking preview", "Your selection is ready for review. Live clinic availability and booking will be connected after backend integration. No appointment has been submitted.")}
-      >
-        <Text style={styles.primaryButtonText}>Continue to review  →</Text>
-      </Pressable>
-      <Text style={styles.helperText}>This is a visual prototype. No real appointment is created.</Text>
-    </ScrollView>
-  );
-}
-
-function RecordsScreen() {
+function AppointmentsScreen() {\n  return <AppointmentBookingScreen />;\n}\n\nfunction RecordsScreen() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <Text style={styles.eyebrow}>YOUR HEALTH INFORMATION</Text>
