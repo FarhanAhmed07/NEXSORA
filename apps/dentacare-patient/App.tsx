@@ -280,6 +280,7 @@ export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [accountType, setAccountType] = useState<"signedout" | "checking" | "patient" | "staff" | "error">("signedout");
+  const [clinicId, setClinicId] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [demoPatient, setDemoPatient] = useState(false);
   const [demoStaff, setDemoStaff] = useState(false);
@@ -335,6 +336,7 @@ export default function App() {
       if (error) {
         setAccountType("error");
       } else if (data && data.length > 0) {
+        setClinicId(String(data[0].clinic_id));
         setAccountType("staff");
       } else if (session.user.user_metadata?.account_type === "clinic_admin") {
         const clinicName = String(session.user.user_metadata?.clinic_name || "My Dental Clinic").trim();
@@ -346,8 +348,22 @@ export default function App() {
           _currency: "PKR",
         });
         if (!active) return;
-        setAccountType(setupError ? "error" : "staff");
+        if (setupError) {
+          setAccountType("error");
+        } else {
+          const { data: ownerMembership, error: membershipError } = await supabase
+            .from("clinic_memberships")
+            .select("clinic_id")
+            .eq("user_id", session.user.id)
+            .eq("status", "active")
+            .limit(1)
+            .maybeSingle();
+          if (!active) return;
+          if (membershipError || !ownerMembership?.clinic_id) setAccountType("error");
+          else { setClinicId(String(ownerMembership.clinic_id)); setAccountType("staff"); }
+        }
       } else {
+        setClinicId(null);
         setAccountType("patient");
       }
     };
@@ -364,6 +380,7 @@ export default function App() {
       }
     }
     setSession(null);
+    setClinicId(null);
     setDemoPatient(false);
     setDemoStaff(false);
     setShowOnboarding(false);
@@ -396,7 +413,7 @@ export default function App() {
     return (
       <View style={styles.app}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-        <ClinicDashboardScreen onExit={session ? signOut : () => setDemoStaff(false)} />
+        <ClinicDashboardScreen clinicId={session ? clinicId : null} onExit={session ? signOut : () => setDemoStaff(false)} />
       </View>
     );
   }
