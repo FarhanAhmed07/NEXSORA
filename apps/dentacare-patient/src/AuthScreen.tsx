@@ -24,6 +24,8 @@ type Props = {
 
 export default function AuthScreen({ onExploreDemo, onOpenClinicDemo, onAuthenticated }: Props) {
   const [mode, setMode] = useState<AuthMode>("signin");
+  const [accountKind, setAccountKind] = useState<"patient" | "clinic">("patient");
+  const [clinicName, setClinicName] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -43,8 +45,8 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo, onAuthenti
       return;
     }
     if (mode === "signup") {
-      if (!name.trim() || !phone.trim() || !confirmPassword) {
-        Alert.alert("Missing information", "Please complete all fields.");
+      if (!name.trim() || !phone.trim() || !confirmPassword || (accountKind === "clinic" && !clinicName.trim())) {
+        Alert.alert("Missing information", "Please complete all required fields.");
         return;
       }
       if (password.length < 8) {
@@ -74,6 +76,8 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo, onAuthenti
             data: {
               full_name: name.trim(),
               phone: phone.trim(),
+              account_type: accountKind === "clinic" ? "clinic_admin" : "patient",
+              clinic_name: accountKind === "clinic" ? clinicName.trim() : null,
             },
           },
         });
@@ -167,6 +171,20 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo, onAuthenti
           </View>
 
           {mode === "signup" && (
+            <View style={styles.accountKindWrap}>
+              <Text style={styles.label}>Account type</Text>
+              <View style={styles.accountKindRow}>
+                <Pressable disabled={busy} onPress={() => setAccountKind("patient")} style={[styles.accountKindButton, accountKind === "patient" && styles.accountKindButtonActive]}>
+                  <Text style={[styles.accountKindText, accountKind === "patient" && styles.accountKindTextActive]}>Patient</Text>
+                </Pressable>
+                <Pressable disabled={busy} onPress={() => setAccountKind("clinic")} style={[styles.accountKindButton, accountKind === "clinic" && styles.accountKindButtonActive]}>
+                  <Text style={[styles.accountKindText, accountKind === "clinic" && styles.accountKindTextActive]}>Clinic owner</Text>
+                </Pressable>
+              </View>
+              {accountKind === "clinic" && field("Clinic name", clinicName, setClinicName, "Enter your clinic name", { autoCapitalize: "words" })}
+            </View>
+          )}
+          {mode === "signup" && (
             <>
               {field("Full name", name, setName, "Enter your full name", { autoCapitalize: "words" })}
               {field("Mobile number", phone, setPhone, "+92 300 1234567", { keyboardType: "phone-pad" })}
@@ -240,6 +258,12 @@ const styles = StyleSheet.create({
   modeText: { color: colors.muted, fontSize: 11, fontWeight: "700" },
   modeTextActive: { color: colors.purpleDark, fontWeight: "900" },
   fieldWrap: { marginBottom: 14 },
+  accountKindWrap: { marginBottom: 8 },
+  accountKindRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  accountKindButton: { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: 11, paddingVertical: 11, alignItems: "center", backgroundColor: colors.background },
+  accountKindButtonActive: { borderColor: colors.purple, backgroundColor: colors.purpleSoft },
+  accountKindText: { color: colors.muted, fontSize: 10, fontWeight: "800" },
+  accountKindTextActive: { color: colors.purpleDark },
   label: { color: colors.text, fontSize: 10, fontWeight: "800", marginBottom: 7 },
   input: { minHeight: 48, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.background, borderRadius: 12, paddingHorizontal: 13, color: colors.text, fontSize: 12 },
   passwordRow: { minHeight: 48, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.background, borderRadius: 12, paddingLeft: 13, paddingRight: 12, flexDirection: "row", alignItems: "center" },
