@@ -22,7 +22,8 @@ A dental clinic management and patient-care mobile app developed by Nexora Solut
 - Live clinic-scoped patient directory, patient registration, patient profile view and active/inactive status updates
 - Live clinic appointment schedule with patient/doctor/service lookups and status transitions (requested → confirmed → arrived → in progress → completed, or cancelled)
 - Clinic ID and verified membership role passed into the staff workspace
-- Doctor directory and inventory overview
+- Live doctor directory for authorized clinic owners/admins (add, search, activate/deactivate)
+- Inventory overview remains clearly marked as sample preview data
 - Clinical workspace, billing, reports and clinic administration previews
 
 ## Technology
@@ -58,6 +59,6 @@ npx expo start -c
 
 **Authentication and initial clinic provisioning are connected in the app code**, including sign-in, sign-up, recovery-email requests, persisted sessions and membership-based staff routing. Clinic owners provision a clinic, main branch and owner membership. Staff patient-directory and appointment modules are connected to live clinic-scoped database operations. The app still requires local environment configuration, TypeScript/build checks and device/end-to-end testing.
 
-The clinic patient directory and appointment management screens now use live Supabase queries and clinic-scoped writes. The dashboard summary cards are explicitly marked as preview and sample rows are hidden for authenticated clinic accounts. Patient-side appointment booking, clinic discovery/linking, clinical notes, treatment plans, prescriptions, invoices, payments, inventory, document storage, consent records and notifications still need live workflows. No demo patient data should be treated as real clinical information.
+The clinic patient directory, appointment management and doctor directory now use live Supabase queries and clinic-scoped writes. The dashboard summary cards are explicitly marked as preview and sample rows are hidden for authenticated clinic accounts. Patient-side appointment booking, clinic discovery/linking, clinical notes, treatment plans, prescriptions, invoices, payments, inventory, document storage, consent records and notifications still need live workflows. No demo patient data should be treated as real clinical information.
 
 The main Nexora website, its main branch and its original Supabase project are not part of this work. TAJ DENTAL changes remain on the separate development branch and new Supabase project. The final standalone GitHub repository, custom app icon, production build and full end-to-end verification remain pending.
