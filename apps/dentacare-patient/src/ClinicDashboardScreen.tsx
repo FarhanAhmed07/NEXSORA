@@ -3,6 +3,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-nati
 import { colors, radius } from "./theme";
 import PatientManagementScreen from "./PatientManagementScreen";
 import ClinicOperationsScreen from "./ClinicOperationsScreen";
+import BillingPaymentsScreen from "./BillingPaymentsScreen";
 
 type Mode = "doctor" | "reception";
 const doctorPatients = [
@@ -24,7 +25,9 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
   const [mode, setMode] = useState<Mode>("doctor");
   const [showPatients, setShowPatients] = useState(false);
   const [operationsSection, setOperationsSection] = useState<"Doctors" | "Inventory" | null>(null);
+  const [showBilling, setShowBilling] = useState(false);
   if (operationsSection) return <ClinicOperationsScreen initialSection={operationsSection} onBack={() => setOperationsSection(null)} />;
+  if (showBilling) return <BillingPaymentsScreen onBack={() => setShowBilling(false)} />;
   if (showPatients) return <PatientManagementScreen onBack={() => setShowPatients(false)} />;
   const doctor = mode === "doctor";
   const rows = doctor ? doctorPatients : receptionPatients;
@@ -83,7 +86,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
             ["♧", "Patient queue", "Check-in & status"],
             ["♙", "Doctors", "Team & availability"],
             ["▥", "Inventory", "Stock & expiry"]
-          ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => name === "Patient records" ? setShowPatients(true) : name === "Doctors" ? setOperationsSection("Doctors") : name === "Inventory" ? setOperationsSection("Inventory") : Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
+          ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => name === "Patient records" ? setShowPatients(true) : name === "Doctors" ? setOperationsSection("Doctors") : name === "Inventory" ? setOperationsSection("Inventory") : name === "Billing" ? setShowBilling(true) : Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
         </View>
 
         <View style={styles.notice}><Text style={styles.noticeTitle}>Privacy-first clinic workspace</Text><Text style={styles.noticeText}>Patient access, clinical notes, billing and staff permissions will be protected by verified roles and clinic-level data access. No real patient information is stored in this preview.</Text></View>
