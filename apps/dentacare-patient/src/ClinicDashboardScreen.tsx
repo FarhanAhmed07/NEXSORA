@@ -46,7 +46,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.top}>
-          <View style={styles.brandRow}><View style={styles.logo}><Text style={styles.logoText}>✦</Text></View><View><Text style={styles.brand}>TAJ DENTAL</Text><Text style={styles.brandSub}>CLINIC MANAGEMENT</Text></View></View>
+          <View style={styles.brandRow}><View style={styles.logo}><Text style={styles.logoText}>🦷</Text></View><View><Text style={styles.brand}>TAJ DENTAL</Text><Text style={styles.brandSub}>CLINIC MANAGEMENT</Text></View></View>
           <Pressable style={styles.avatar} onPress={() => Alert.alert("Demo account", "Staff profile and permissions will be connected to secure authentication.")}><Text style={styles.avatarText}>{doctor ? "EC" : reception ? "OR" : "AD"}</Text></Pressable>
         </View>
         <View style={styles.demoBanner}><Text style={styles.demoBannerText}>DEMO WORKSPACE  ·  SAMPLE CLINIC DATA</Text></View>
