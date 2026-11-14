@@ -129,7 +129,7 @@ export default function CareHubScreen() {
           <View style={styles.jawDivider} />
           <Text style={styles.body}>Lower jaw</Text>
           <View style={styles.teethGrid}>{teeth.slice(16).map(tooth => <Pressable key={tooth} onPress={() => setSelectedTooth(tooth)} style={[styles.tooth, selectedTooth === tooth && styles.toothSelected]}><Text style={[styles.toothText, selectedTooth === tooth && styles.toothTextSelected]}>{tooth}</Text></Pressable>)}</View>
-          <View style={styles.selectedToothBox}><Text style={styles.cardEyebrow}>SELECTED TOOTH</Text><Text style={styles.heroTitle}>Tooth {selectedTooth}</Text><Text style={styles.body}>No clinical finding is recorded in this demo chart.</Text></View>
+          <View style={styles.selectedToothBox}><Text style={styles.cardEyebrow}>SELECTED TOOTH</Text><Text style={styles.selectedToothTitle}>Tooth {selectedTooth}</Text><Text style={styles.body}>No clinical finding is recorded in this demo chart.</Text></View>
         </>
       )}
       <Text style={styles.helper}>This chart is for navigation and record display only. It does not detect cavities or diagnose dental conditions.</Text>
@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
   toothTextSelected: { color: "#fff" },
   jawDivider: { height: 1, backgroundColor: colors.border, marginTop: 18 },
   selectedToothBox: { backgroundColor: colors.pinkSoft, borderRadius: 14, padding: 13, marginTop: 17 },
+  selectedToothTitle: { color: colors.purpleDark, fontSize: 18, fontWeight: "900", marginTop: 8 },
   money: { color: colors.text, fontSize: 11, fontWeight: "800" },
   total: { color: colors.purpleDark, fontSize: 16, fontWeight: "900" },
   primaryButton: { backgroundColor: colors.pink, borderRadius: 12, padding: 14, alignItems: "center", marginTop: 17 },
