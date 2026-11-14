@@ -1,33 +1,60 @@
-# TAJ DENTAL Mobile App
+# TAJ DENTAL
 
-Clinic and patient mobile app preview for Taj Dental, developed by Nexora Solutions.
+A dental clinic management and patient-care mobile app preview developed by Nexora Solutions for Taj Dental.
 
-## Current starter screens
+## Included workspaces
 
-- Home dashboard
-- Appointment overview and local booking-flow preview
-- Patient records overview
-- Patient profile and account settings
+### Patient portal
+- Sign-in and account creation screens (preview only)
+- Patient onboarding and profile details
+- Home dashboard and dental-care routine
+- Appointment booking flow
+- Care hub: treatment plans, prescriptions, FDI dental chart, bills, documents and notifications
+- Dental Care Assistant with general educational FAQs and urgent-care signposting
 
-## Stack
+### Clinic staff workspace
+- Doctor dashboard and clinical schedule
+- Reception dashboard and front-desk queue
+- Admin dashboard and clinic overview
+- Patient search and patient profile preview
+- Appointment management with local status changes
+- Doctor directory and inventory overview
+- Clinical workspace: treatment plan, dental chart and prescription previews
+- Billing and payment history preview
+- Reports and analytics
+- Clinic administration: branches, staff roles, services and settings
+- Communications templates, consent forms, audit log and subscription preview
 
+## Technology
 - Expo SDK 58
 - React Native 0.88
 - React 19.3
 - TypeScript
 
-## Run locally
+## Run on Android or iOS
+1. Install Node.js LTS and Git on your computer.
+2. Clone this repository and switch to `feature/dentacare-patient-app`.
+3. Open a terminal in `apps/dentacare-patient`.
+4. Run:
 
 ```bash
-cd apps/dentacare-patient
 npm install
 npx expo start
 ```
 
-Install Expo Go on an Android or iOS device and scan the development QR code.
+5. Install Expo Go on your phone and scan the QR code shown in the terminal.
 
-## Important
+## Current release status
 
-This first build is a UI prototype using sample data. Authentication, live clinic discovery, real appointment availability, patient records, notifications and Supabase integration are not connected yet. No real appointment or patient data is submitted.
+This is a frontend prototype. All patient, appointment, revenue, staff and inventory entries are sample data. Local preview interactions do not write to a database.
 
-Temporary visual identity: purple and pink. The final logo and brand kit will replace the current placeholder mark later.
+Not connected yet:
+- Supabase authentication, database, row-level security and private file storage
+- Verified staff roles and clinic/branch data isolation
+- Live appointment availability and server-side conflict prevention
+- SMS, WhatsApp, email and push notification providers
+- Payment gateway and real receipts
+- AI service integration (the current Dental Care Assistant is a static educational preview)
+- Production audit events, consent e-signatures and subscription billing
+
+No live database schema has been changed as part of this frontend work. The main Nexora website and main branch are not modified. The final custom tooth logo/app icon and production build are still pending.
