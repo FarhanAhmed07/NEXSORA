@@ -63,8 +63,8 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.brand}>
-          <View style={styles.brandMark}><Text style={styles.brandMarkText}>✦</Text></View>
-          <Text style={styles.brandName}>Taj Dental</Text>
+          <View style={styles.brandMark}><Text style={styles.brandMarkText}>🦷</Text></View>
+          <Text style={styles.brandName}>TAJ DENTAL</Text>
           <Text style={styles.brandCaption}>SMART DENTAL CLINIC</Text>
         </View>
 
