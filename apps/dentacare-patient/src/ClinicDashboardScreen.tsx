@@ -44,7 +44,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.top}>
           <View style={styles.brandRow}><View style={styles.logo}><Text style={styles.logoText}>✦</Text></View><View><Text style={styles.brand}>TAJ DENTAL</Text><Text style={styles.brandSub}>CLINIC MANAGEMENT</Text></View></View>
-          <Pressable style={styles.avatar} onPress={() => Alert.alert("Demo account", "Staff profile and permissions will be connected to secure authentication.")}><Text style={styles.avatarText}>{doctor ? "EC" : "OR"}</Text></Pressable>
+          <Pressable style={styles.avatar} onPress={() => Alert.alert("Demo account", "Staff profile and permissions will be connected to secure authentication.")}><Text style={styles.avatarText}>{doctor ? "EC" : reception ? "OR" : "AD"}</Text></Pressable>
         </View>
         <View style={styles.demoBanner}><Text style={styles.demoBannerText}>DEMO WORKSPACE  ·  SAMPLE CLINIC DATA</Text></View>
         <Text style={styles.greeting}>{title}</Text>
@@ -60,10 +60,14 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
             <Metric label="Today's visits" value="08" note="+2 from yesterday" tint={colors.purple} />
             <Metric label="Completed" value="03" note="Of 8 appointments" tint="#28A879" />
             <Metric label="Waiting" value="02" note="Next patient soon" tint={colors.pink} />
-          </> : <>
+          </> : reception ? <>
             <Metric label="Appointments" value="18" note="Across all doctors" tint={colors.purple} />
             <Metric label="Checked in" value="07" note="Patients arrived" tint="#28A879" />
             <Metric label="Pending bills" value="04" note="Needs follow-up" tint={colors.pink} />
+          </> : <>
+            <Metric label="Today's revenue" value="PKR 48k" note="Sample figures" tint={colors.purple} />
+            <Metric label="Appointments" value="18" note="Across the clinic" tint="#28A879" />
+            <Metric label="Low stock" value="03" note="Needs attention" tint={colors.pink} />
           </>}
         </View>
 
@@ -78,7 +82,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
           ))}
         </View>
 
-        <View style={styles.sectionHead}><Text style={styles.sectionTitle}>{doctor ? "Clinical tools" : "Front desk tools"}</Text><Text style={styles.sectionAction}>Workspace</Text></View>
+        <View style={styles.sectionHead}><Text style={styles.sectionTitle}>{doctor ? "Clinical tools" : reception ? "Front desk tools" : "Administration tools"}</Text><Text style={styles.sectionAction}>Workspace</Text></View>
         <View style={styles.toolsGrid}>
           {(doctor ? [
             ["✚", "Patient records", "History & notes"],
@@ -98,6 +102,13 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
             ["▥", "Inventory", "Stock & expiry"],
             ["▤", "Reports", "Clinic performance"],
             ["⚙", "Administration", "Clinic settings"]
+          ] : [
+            ["▤", "Reports", "Revenue & performance"],
+            ["♙", "Doctors", "Staff & schedules"],
+            ["▥", "Inventory", "Stock & expiry"],
+            ["＄", "Billing", "Invoices & payments"],
+            ["✚", "Patient records", "Clinic patient list"],
+            ["⚙", "Administration", "Branches, roles & services"]
           ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => name === "Patient records" ? setShowPatients(true) : name === "Doctors" ? setOperationsSection("Doctors") : name === "Inventory" ? setOperationsSection("Inventory") : name === "Billing" ? setShowBilling(true) : name === "Reports" ? setShowReports(true) : name === "Administration" ? setShowAdmin(true) : Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
         </View>
 
