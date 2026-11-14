@@ -236,7 +236,7 @@ function RecordsScreen() {
   );
 }
 
-function ProfileScreen({ session, onSignOut }: { session: Session; onSignOut: () => void }) {
+function ProfileScreen({ session, onSignOut }: { session: Session | null; onSignOut: () => void }) {
   const rows = [
     ["Personal information", "Name, date of birth and contact"],
     ["Family members", "Manage dependent profiles"],
@@ -252,8 +252,8 @@ function ProfileScreen({ session, onSignOut }: { session: Session; onSignOut: ()
       <View style={styles.profileCard}>
         <View style={styles.profileAvatar}><Text style={styles.profileAvatarText}>OR</Text></View>
         <Text style={styles.profileName}>{String(session.user.user_metadata?.full_name || "TAJ DENTAL Patient")}</Text>
-        <Text style={styles.profileEmail}>{session.user.email || ""}</Text>
-        <View style={styles.profileTag}><Text style={styles.profileTagText}>SECURE PATIENT ACCOUNT</Text></View>
+        <Text style={styles.profileEmail}>{session?.user.email || "Preview account"}</Text>
+        <View style={styles.profileTag}><Text style={styles.profileTagText}>{session ? "SECURE PATIENT ACCOUNT" : "PATIENT PREVIEW"}</Text></View>
       </View>
       <SectionTitle title="Account settings" />
       <View style={styles.settingsCard}>
@@ -400,7 +400,7 @@ export default function App() {
         case "profile":
           return session
             ? <ProfileScreen session={session} onSignOut={signOut} />
-            : <ProfileScreen session={{ user: { user_metadata: {}, email: "preview@tajdental.local" } } as Session} onSignOut={() => setDemoPatient(false)} />;
+            : <ProfileScreen session={null} onSignOut={() => setDemoPatient(false)} />;
         default:
           return <HomeScreen onBook={() => setActiveTab("appointments")} onRecords={() => setActiveTab("records")} />;
       }
