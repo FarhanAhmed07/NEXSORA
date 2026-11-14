@@ -26,7 +26,7 @@ function Metric({ label, value, note, tint }: { label: string; value: string; no
   return <View style={styles.metric}><View style={[styles.metricDot, { backgroundColor: tint }]} /><Text style={styles.metricValue}>{value}</Text><Text style={styles.metricLabel}>{label}</Text><Text style={styles.metricNote}>{note}</Text></View>;
 }
 
-export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }) {
+export default function ClinicDashboardScreen({ onExit, clinicId }: { onExit: () => void; clinicId: string | null }) {
   const [mode, setMode] = useState<Mode>("doctor");
   const [showPatients, setShowPatients] = useState(false);
   const [operationsSection, setOperationsSection] = useState<"Doctors" | "Inventory" | null>(null);
@@ -41,7 +41,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
   if (showReports) return <ReportsAnalyticsScreen onBack={() => setShowReports(false)} />;
   if (showAdmin) return <ClinicAdminScreen onBack={() => setShowAdmin(false)} />;
   if (showGovernance) return <ClinicGovernanceScreen onBack={() => setShowGovernance(false)} />;
-  if (showAppointments) return <ClinicAppointmentsScreen onBack={() => setShowAppointments(false)} />;
+  if (showAppointments) return <ClinicAppointmentsScreen clinicId={clinicId} onBack={() => setShowAppointments(false)} />;
   if (clinicalSection) return <ClinicClinicalScreen initialSection={clinicalSection} onBack={() => setClinicalSection(null)} />;
   if (showPatients) return <PatientManagementScreen onBack={() => setShowPatients(false)} />;
   const doctor = mode === "doctor";
