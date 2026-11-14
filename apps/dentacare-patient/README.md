@@ -1,60 +1,60 @@
 # TAJ DENTAL
 
-A dental clinic management and patient-care mobile app preview developed by Nexora Solutions for Taj Dental.
+A dental clinic management and patient-care mobile app developed by Nexora Solutions.
 
 ## Included workspaces
 
 ### Patient portal
-- Sign-in and account creation screens (preview only)
-- Patient onboarding and profile details
+- Supabase email/password sign-in and account creation
+- Password recovery email flow
+- Persisted authentication session
+- Patient onboarding preview
 - Home dashboard and dental-care routine
 - Appointment booking flow
 - Care hub: treatment plans, prescriptions, FDI dental chart, bills, documents and notifications
 - Dental Care Assistant with general educational FAQs and urgent-care signposting
 
 ### Clinic staff workspace
-- Doctor dashboard and clinical schedule
-- Reception dashboard and front-desk queue
-- Admin dashboard and clinic overview
+- Doctor, reception and admin dashboard previews
+- Staff access is routed by active clinic membership from Supabase
 - Patient search and patient profile preview
-- Appointment management with local status changes
+- Appointment management preview
 - Doctor directory and inventory overview
-- Clinical workspace: treatment plan, dental chart and prescription previews
-- Billing and payment history preview
-- Reports and analytics
-- Clinic administration: branches, staff roles, services and settings
-- Communications templates, consent forms, audit log and subscription preview
+- Clinical workspace, billing, reports and clinic administration previews
 
 ## Technology
 - Expo SDK 58
 - React Native 0.88
 - React 19.3
 - TypeScript
+- Supabase Auth and Postgres (separate TAJ DENTAL project)
+
+## Configure Supabase
+
+1. Copy `.env.example` to `.env` inside this folder.
+2. Set `EXPO_PUBLIC_SUPABASE_URL` to the TAJ DENTAL project URL.
+3. Set `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to the project's publishable key. Never use a service-role or secret key in the mobile app.
+4. Keep `.env` private; it is excluded by this folder's `.gitignore`.
 
 ## Run on Android or iOS
-1. Install Node.js LTS and Git on your computer.
+
+1. Install Node.js LTS and Git.
 2. Clone this repository and switch to `feature/dentacare-patient-app`.
 3. Open a terminal in `apps/dentacare-patient`.
 4. Run:
 
 ```bash
 npm install
-npx expo start
+npm run typecheck
+npx expo start -c
 ```
 
 5. Install Expo Go on your phone and scan the QR code shown in the terminal.
 
 ## Current release status
 
-This is a frontend prototype. All patient, appointment, revenue, staff and inventory entries are sample data. Local preview interactions do not write to a database.
+**Authentication is connected in the app code**, including sign-in, sign-up, password recovery, persisted sessions and clinic-membership routing. The app still requires local environment configuration and a device/build test.
 
-Not connected yet:
-- Supabase authentication, database, row-level security and private file storage
-- Verified staff roles and clinic/branch data isolation
-- Live appointment availability and server-side conflict prevention
-- SMS, WhatsApp, email and push notification providers
-- Payment gateway and real receipts
-- AI service integration (the current Dental Care Assistant is a static educational preview)
-- Production audit events, consent e-signatures and subscription billing
+The clinic dashboard and patient care screens are still preview UI. Patient appointments, clinical notes, treatment plans, prescriptions, invoices, payments, inventory, document storage, consent records and notifications are not yet wired to live CRUD workflows. No patient demo data should be treated as real clinical information.
 
-No live database schema has been changed as part of this frontend work. The main Nexora website and main branch are not modified. The final custom tooth logo/app icon and production build are still pending.
+The main Nexora website, its main branch and its original Supabase project are not part of this work. TAJ DENTAL changes remain on the separate development branch and new Supabase project. The final standalone GitHub repository, custom app icon, production build and full end-to-end verification remain pending.
