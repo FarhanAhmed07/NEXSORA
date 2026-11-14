@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View, type ViewStyle } from "react-native";
 import { colors, radius } from "./theme";
 
-type ModuleKey = "overview" | "treatments" | "prescriptions" | "dental" | "billing" | "documents" | "notifications";
+type ModuleKey = "overview" | "treatments" | "prescriptions" | "dental" | "billing" | "documents" | "notifications" | "guide";
 
 const modules: { key: ModuleKey; title: string; subtitle: string; icon: string }[] = [
   { key: "overview", title: "Care overview", subtitle: "Your dental care at a glance", icon: "✦" },
@@ -11,7 +11,8 @@ const modules: { key: ModuleKey; title: string; subtitle: string; icon: string }
   { key: "dental", title: "Dental chart", subtitle: "Interactive tooth map", icon: "▦" },
   { key: "billing", title: "Bills & payments", subtitle: "Invoices and payment history", icon: "₨" },
   { key: "documents", title: "Documents", subtitle: "Reports and dental files", icon: "▤" },
-  { key: "notifications", title: "Notifications", subtitle: "Reminders and clinic updates", icon: "♧" }
+  { key: "notifications", title: "Notifications", subtitle: "Reminders and clinic updates", icon: "♧" },
+  { key: "guide", title: "Dental assistant", subtitle: "General care guidance", icon: "✧" }
 ];
 
 const teeth = [
@@ -24,6 +25,7 @@ export default function CareHubScreen() {
   const [selectedTooth, setSelectedTooth] = useState(16);
   const [paid, setPaid] = useState(false);
   const [readNotifications, setReadNotifications] = useState<number[]>([]);
+  const [openGuide, setOpenGuide] = useState<number | null>(0);
 
   const go = (key: ModuleKey) => setActive(key);
   const header = (eyebrow: string, title: string, subtitle: string) => (
@@ -188,12 +190,43 @@ export default function CareHubScreen() {
     </>
   );
 
+  const renderGuide = () => (
+    <>
+      {header("TAJ DENTAL SUPPORT", "Dental care assistant", "Explore general oral-care information and learn when to contact your dental team.")}
+      {card(
+        <>
+          <Text style={styles.cardEyebrow}>EDUCATIONAL PREVIEW</Text>
+          <Text style={styles.itemTitle}>How can we help?</Text>
+          <Text style={styles.body}>Choose a common question below. This preview provides general information only and does not assess symptoms or diagnose conditions.</Text>
+        </>
+      )}
+      {[
+        ["How often should I brush?", "Most people benefit from brushing twice a day for about two minutes with fluoride toothpaste. Use a soft-bristled brush and ask your dentist what is suitable for you."],
+        ["Why is flossing important?", "Cleaning between teeth helps remove plaque where a toothbrush may not reach. Ask your dental professional to show you a technique that suits your teeth and gums."],
+        ["What should I do if a tooth hurts?", "Arrange an assessment with a dentist. If you have facial swelling, fever, difficulty swallowing or breathing, seek urgent medical or dental care."],
+        ["When should I book a check-up?", "Your dentist can recommend an interval based on your oral health, history and risk factors. Contact Taj Dental to arrange a review."]
+      ].map((item,index)=>(
+        <Pressable key={item[0]} style={styles.notificationRow} onPress={()=>setOpenGuide(openGuide===index?null:index)}>
+          <View style={styles.timelineCopy}>
+            <View style={styles.rowBetween}><Text style={styles.itemTitleSmall}>{item[0]}</Text><Text style={styles.moduleArrow}>{openGuide===index?"−":"+"}</Text></View>
+            {openGuide===index?<Text style={styles.body}>{item[1]}</Text>:null}
+          </View>
+        </Pressable>
+      ))}
+      <View style={styles.privacyBox}>
+        <Text style={styles.privacyTitle}>Need personal advice?</Text>
+        <Text style={styles.privacyText}>Contact your dental professional. This guide is not an emergency service and cannot diagnose or recommend medication.</Text>
+      </View>
+    </>
+  );
+
   const body = active === "overview" ? renderOverview()
     : active === "treatments" ? renderTreatments()
     : active === "prescriptions" ? renderPrescriptions()
     : active === "dental" ? renderDental()
     : active === "billing" ? renderBilling()
     : active === "documents" ? renderDocuments()
+    : active === "guide" ? renderGuide()
     : renderNotifications();
 
   return (
