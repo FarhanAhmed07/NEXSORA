@@ -7,7 +7,7 @@ import BillingPaymentsScreen from "./BillingPaymentsScreen";
 import ReportsAnalyticsScreen from "./ReportsAnalyticsScreen";
 import ClinicAdminScreen from "./ClinicAdminScreen";
 
-type Mode = "doctor" | "reception";
+type Mode = "doctor" | "reception" | "admin";
 const doctorPatients = [
   { time: "09:00", name: "Ava Thompson", service: "Routine check-up", status: "In progress", tone: "purple" },
   { time: "10:30", name: "Noah Williams", service: "Tooth pain consultation", status: "Waiting", tone: "pink" },
@@ -36,21 +36,23 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
   if (showAdmin) return <ClinicAdminScreen onBack={() => setShowAdmin(false)} />;
   if (showPatients) return <PatientManagementScreen onBack={() => setShowPatients(false)} />;
   const doctor = mode === "doctor";
+  const reception = mode === "reception";
   const rows = doctor ? doctorPatients : receptionPatients;
-  const title = doctor ? "Good morning, Dr. Carter" : "Good morning, Olivia";
+  const title = doctor ? "Good morning, Dr. Carter" : reception ? "Good morning, Olivia" : "Welcome, Clinic Admin";
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.top}>
-          <View style={styles.brandRow}><View style={styles.logo}><Text style={styles.logoText}>✦</Text></View><View><Text style={styles.brand}>DentaCare</Text><Text style={styles.brandSub}>CLINIC WORKSPACE</Text></View></View>
+          <View style={styles.brandRow}><View style={styles.logo}><Text style={styles.logoText}>✦</Text></View><View><Text style={styles.brand}>TAJ DENTAL</Text><Text style={styles.brandSub}>CLINIC MANAGEMENT</Text></View></View>
           <Pressable style={styles.avatar} onPress={() => Alert.alert("Demo account", "Staff profile and permissions will be connected to secure authentication.")}><Text style={styles.avatarText}>{doctor ? "EC" : "OR"}</Text></Pressable>
         </View>
         <View style={styles.demoBanner}><Text style={styles.demoBannerText}>DEMO WORKSPACE  ·  SAMPLE CLINIC DATA</Text></View>
         <Text style={styles.greeting}>{title}</Text>
-        <Text style={styles.subtitle}>{doctor ? "Here is your clinical overview for today." : "Your front desk overview for today."}</Text>
+        <Text style={styles.subtitle}>{doctor ? "Here is your clinical overview for today." : reception ? "Your front desk overview for today." : "Manage your Taj Dental clinic operations from one place."}</Text>
         <View style={styles.switcher}>
-          <Pressable onPress={() => setMode("doctor")} style={[styles.switchButton, doctor && styles.switchActive]}><Text style={[styles.switchText, doctor && styles.switchTextActive]}>Doctor view</Text></Pressable>
-          <Pressable onPress={() => setMode("reception")} style={[styles.switchButton, !doctor && styles.switchActive]}><Text style={[styles.switchText, !doctor && styles.switchTextActive]}>Reception view</Text></Pressable>
+          <Pressable onPress={() => setMode("doctor")} style={[styles.switchButton, doctor && styles.switchActive]}><Text style={[styles.switchText, doctor && styles.switchTextActive]}>Doctor</Text></Pressable>
+          <Pressable onPress={() => setMode("reception")} style={[styles.switchButton, reception && styles.switchActive]}><Text style={[styles.switchText, reception && styles.switchTextActive]}>Reception</Text></Pressable>
+          <Pressable onPress={() => setMode("admin")} style={[styles.switchButton, mode === "admin" && styles.switchActive]}><Text style={[styles.switchText, mode === "admin" && styles.switchTextActive]}>Admin</Text></Pressable>
         </View>
 
         <View style={styles.metrics}>
@@ -101,7 +103,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
 
         <View style={styles.notice}><Text style={styles.noticeTitle}>Privacy-first clinic workspace</Text><Text style={styles.noticeText}>Patient access, clinical notes, billing and staff permissions will be protected by verified roles and clinic-level data access. No real patient information is stored in this preview.</Text></View>
         <Pressable style={styles.exitButton} onPress={onExit}><Text style={styles.exitText}>← Back to patient app</Text></Pressable>
-        <Text style={styles.footer}>DentaCare · A Product by Nexora Solutions</Text>
+        <Text style={styles.footer}>TAJ DENTAL · Developed by Nexora Solutions</Text>
       </ScrollView>
     </View>
   );
