@@ -32,7 +32,7 @@ export default function OnboardingScreen({ onContinue }: Props) {
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.brand}>DentaCare</Text>
+          <Text style={styles.brand}>Taj Dental</Text>
           <Text style={styles.step}>PATIENT SETUP · STEP 1 OF 2</Text>
           <Text style={styles.title}>Let’s get to know you</Text>
           <Text style={styles.subtitle}>Add a few details to personalise your dental care experience.</Text>
@@ -62,7 +62,7 @@ export default function OnboardingScreen({ onContinue }: Props) {
           <Pressable style={styles.primary} onPress={finish}><Text style={styles.primaryText}>Save profile & continue  →</Text></Pressable>
           <Pressable style={styles.skip} onPress={onContinue}><Text style={styles.skipText}>Skip for now</Text></Pressable>
         </View>
-        <Text style={styles.footer}>DentaCare · A Product by Nexora Solutions</Text>
+        <Text style={styles.footer}>Taj Dental · A Product by Nexora Solutions</Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
