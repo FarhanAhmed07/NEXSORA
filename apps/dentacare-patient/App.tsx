@@ -12,7 +12,8 @@ import { colors, radius } from "./src/theme";
 import AuthScreen from "./src/AuthScreen";
 import OnboardingScreen from "./src/OnboardingScreen";
 import CareHubScreen from "./src/CareHubScreen";
-import AppointmentBookingScreen from "./src/AppointmentBookingScreen";\nimport ClinicDashboardScreen from "./src/ClinicDashboardScreen";
+import AppointmentBookingScreen from "./src/AppointmentBookingScreen";
+import ClinicDashboardScreen from "./src/ClinicDashboardScreen";
 
 type TabKey = "home" | "appointments" | "records" | "care" | "profile";
 
@@ -178,7 +179,11 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
   );
 }
 
-function AppointmentsScreen() {\n  return <AppointmentBookingScreen />;\n}\n\nfunction RecordsScreen() {
+function AppointmentsScreen() {
+  return <AppointmentBookingScreen />;
+}
+
+function RecordsScreen() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <Text style={styles.eyebrow}>YOUR HEALTH INFORMATION</Text>
@@ -268,9 +273,19 @@ function ProfileScreen() {
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const [showApp, setShowApp] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);\n  const [showClinicDashboard, setShowClinicDashboard] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showClinicDashboard, setShowClinicDashboard] = useState(false);
 
-  if (showClinicDashboard) {\n    return (\n      <View style={styles.app}>\n        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />\n        <ClinicDashboardScreen onExit={() => setShowClinicDashboard(false)} />\n      </View>\n    );\n  }\n\n  if (showOnboarding) {
+  if (showClinicDashboard) {
+    return (
+      <View style={styles.app}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        <ClinicDashboardScreen onExit={() => setShowClinicDashboard(false)} />
+      </View>
+    );
+  }
+
+  if (showOnboarding) {
     return (
       <View style={styles.app}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
