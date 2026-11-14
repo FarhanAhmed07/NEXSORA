@@ -5,8 +5,8 @@ A dental clinic management and patient-care mobile app developed by Nexora Solut
 ## Included workspaces
 
 ### Patient portal
-- Supabase email/password sign-in and account creation
-- Password recovery email flow
+- Supabase email/password sign-in and account creation (patient or clinic owner)
+- Password recovery email request (deep-link password update flow still pending)
 - Persisted authentication session
 - Patient onboarding preview
 - Home dashboard and dental-care routine
@@ -53,7 +53,7 @@ npx expo start -c
 
 ## Current release status
 
-**Authentication is connected in the app code**, including sign-in, sign-up, password recovery, persisted sessions and clinic-membership routing. The app still requires local environment configuration and a device/build test.
+**Authentication is connected in the app code**, including sign-in, sign-up, password-recovery email requests, persisted sessions and clinic-membership routing. New clinic-owner accounts provision their own clinic workspace and main branch through the protected database function. The app still requires local environment configuration and a device/build test.
 
 The clinic dashboard and patient care screens are still preview UI. Patient appointments, clinical notes, treatment plans, prescriptions, invoices, payments, inventory, document storage, consent records and notifications are not yet wired to live CRUD workflows. No patient demo data should be treated as real clinical information.
 
