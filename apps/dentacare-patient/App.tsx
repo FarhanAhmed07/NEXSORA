@@ -44,7 +44,7 @@ function SectionTitle({ title, action }: { title: string; action?: string }) {
   );
 }
 
-function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () => void }) {
+function HomeScreen({ onBook, onRecords, displayName }: { onBook: () => void; onRecords: () => void; displayName: string }) {
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <View style={styles.topBar}>
@@ -63,7 +63,7 @@ function HomeScreen({ onBook, onRecords }: { onBook: () => void; onRecords: () =
 
       <View style={styles.greetingBlock}>
         <Text style={styles.eyebrow}>PATIENT PORTAL</Text>
-        <Text style={styles.greeting}>Good morning, Olivia</Text>
+        <Text style={styles.greeting}>Good morning, {displayName}</Text>
         <Text style={styles.subGreeting}>A healthy smile starts with good care.</Text>
       </View>
 
@@ -316,6 +316,12 @@ export default function App() {
     let active = true;
     setAccountType("checking");
     const resolveAccount = async () => {
+      const metadata = session.user.user_metadata || {};
+      await supabase.from("profiles").update({
+        full_name: metadata.full_name || null,
+        phone: metadata.phone || null,
+      }).eq("id", session.user.id);
+
       const { data, error } = await supabase
         .from("clinic_memberships")
         .select("clinic_id, role, branch_id")
@@ -402,7 +408,11 @@ export default function App() {
             ? <ProfileScreen session={session} onSignOut={signOut} />
             : <ProfileScreen session={null} onSignOut={() => setDemoPatient(false)} />;
         default:
-          return <HomeScreen onBook={() => setActiveTab("appointments")} onRecords={() => setActiveTab("records")} />;
+          return <HomeScreen
+            onBook={() => setActiveTab("appointments")}
+            onRecords={() => setActiveTab("records")}
+            displayName={session ? String(session.user.user_metadata?.full_name || "there").split(" ")[0] : "there"}
+          />;
       }
     };
     return (
