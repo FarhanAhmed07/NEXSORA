@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -9,6 +9,8 @@ import {
   View
 } from "react-native";
 import { colors, radius } from "./src/theme";
+import type { Session } from "@supabase/supabase-js";
+import { supabase } from "./src/supabase";
 import AuthScreen from "./src/AuthScreen";
 import OnboardingScreen from "./src/OnboardingScreen";
 import CareHubScreen from "./src/CareHubScreen";
@@ -234,7 +236,7 @@ function RecordsScreen() {
   );
 }
 
-function ProfileScreen() {
+function ProfileScreen({ session, onSignOut }: { session: Session; onSignOut: () => void }) {
   const rows = [
     ["Personal information", "Name, date of birth and contact"],
     ["Family members", "Manage dependent profiles"],
@@ -249,9 +251,9 @@ function ProfileScreen() {
       <Text style={styles.screenTitle}>My profile</Text>
       <View style={styles.profileCard}>
         <View style={styles.profileAvatar}><Text style={styles.profileAvatarText}>OR</Text></View>
-        <Text style={styles.profileName}>Olivia Reynolds</Text>
-        <Text style={styles.profileEmail}>olivia@example.com</Text>
-        <View style={styles.profileTag}><Text style={styles.profileTagText}>PATIENT ACCOUNT · DEMO</Text></View>
+        <Text style={styles.profileName}>{String(session.user.user_metadata?.full_name || "TAJ DENTAL Patient")}</Text>
+        <Text style={styles.profileEmail}>{session.user.email || ""}</Text>
+        <View style={styles.profileTag}><Text style={styles.profileTagText}>SECURE PATIENT ACCOUNT</Text></View>
       </View>
       <SectionTitle title="Account settings" />
       <View style={styles.settingsCard}>
@@ -265,6 +267,9 @@ function ProfileScreen() {
           </Pressable>
         ))}
       </View>
+      <Pressable onPress={onSignOut} style={{ backgroundColor: colors.purpleDark, borderRadius: 13, paddingVertical: 14, alignItems: "center", marginTop: 18 }}>
+        <Text style={{ color: "#FFFFFF", fontSize: 12, fontWeight: "800" }}>Sign out</Text>
+      </Pressable>
       <Text style={styles.demoNoticeText}>Taj Dental · A Product by Nexora Solutions</Text>
     </ScrollView>
   );
@@ -272,69 +277,168 @@ function ProfileScreen() {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
-  const [showApp, setShowApp] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [accountType, setAccountType] = useState<"signedout" | "checking" | "patient" | "staff" | "error">("signedout");
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showClinicDashboard, setShowClinicDashboard] = useState(false);
+  const [demoPatient, setDemoPatient] = useState(false);
+  const [demoStaff, setDemoStaff] = useState(false);
 
-  if (showClinicDashboard) {
-    return (
-      <View style={styles.app}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-        <ClinicDashboardScreen onExit={() => setShowClinicDashboard(false)} />
-      </View>
-    );
-  }
-
-  if (showOnboarding) {
-    return (
-      <View style={styles.app}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-        <OnboardingScreen onContinue={() => { setShowOnboarding(false); setShowApp(true); }} />
-      </View>
-    );
-  }
-
-  if (!showApp) {
-    return (
-      <View style={styles.app}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-        <AuthScreen onExploreDemo={() => setShowOnboarding(true)} onOpenClinicDemo={() => setShowClinicDashboard(true)} />
-      </View>
-    );
-  }
-
-  const content = () => {
-    switch (activeTab) {
-      case "appointments":
-        return <AppointmentsScreen />;
-      case "records":
-        return <RecordsScreen />;
-      case "care":
-        return <CareHubScreen />;
-      case "profile":
-        return <ProfileScreen />;
-      default:
-        return <HomeScreen onBook={() => setActiveTab("appointments")} onRecords={() => setActiveTab("records")} />;
+  useEffect(() => {
+    if (!supabase) {
+      setAuthReady(true);
+      return;
     }
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) {
+        setSession(data.session);
+        setAuthReady(true);
+      }
+    }).catch(() => {
+      if (mounted) setAuthReady(true);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      if (!nextSession) setAccountType("signedout");
+    });
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!session || !supabase) {
+      if (!session) setAccountType("signedout");
+      return;
+    }
+    let active = true;
+    setAccountType("checking");
+    const resolveAccount = async () => {
+      const { data, error } = await supabase
+        .from("clinic_memberships")
+        .select("clinic_id, role, branch_id")
+        .eq("user_id", session.user.id)
+        .eq("status", "active")
+        .limit(1);
+      if (!active) return;
+      if (error) {
+        setAccountType("error");
+      } else {
+        setAccountType(data && data.length > 0 ? "staff" : "patient");
+      }
+    };
+    resolveAccount();
+    return () => { active = false; };
+  }, [session]);
+
+  const signOut = async () => {
+    if (supabase) {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        Alert.alert("Sign out failed", error.message);
+        return;
+      }
+    }
+    setSession(null);
+    setDemoPatient(false);
+    setDemoStaff(false);
+    setShowOnboarding(false);
+    setAccountType("signedout");
   };
+
+  if (!authReady || (session && accountType === "checking")) {
+    return (
+      <View style={[styles.app, { alignItems: "center", justifyContent: "center" }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        <Text style={{ color: colors.purpleDark, fontSize: 14, fontWeight: "800" }}>TAJ DENTAL</Text>
+        <Text style={{ color: colors.muted, fontSize: 11, marginTop: 8 }}>Securely loading your account…</Text>
+      </View>
+    );
+  }
+
+  if (session && accountType === "error") {
+    return (
+      <View style={[styles.app, { alignItems: "center", justifyContent: "center", padding: 24 }]}>
+        <Text style={{ color: colors.text, fontSize: 16, fontWeight: "800" }}>Could not verify your clinic access</Text>
+        <Text style={{ color: colors.muted, fontSize: 12, textAlign: "center", marginTop: 8 }}>Please check your connection and try signing in again.</Text>
+        <Pressable onPress={signOut} style={{ backgroundColor: colors.pink, borderRadius: 12, padding: 14, marginTop: 18 }}>
+          <Text style={{ color: "#FFFFFF", fontWeight: "800" }}>Sign out</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  if (session && accountType === "staff" || demoStaff) {
+    return (
+      <View style={styles.app}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        <ClinicDashboardScreen onExit={session ? signOut : () => setDemoStaff(false)} />
+      </View>
+    );
+  }
+
+  if (showOnboarding && !session) {
+    return (
+      <View style={styles.app}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        <OnboardingScreen onContinue={() => { setShowOnboarding(false); setDemoPatient(true); }} />
+      </View>
+    );
+  }
+
+  if (session && accountType === "patient" || demoPatient) {
+    const content = () => {
+      switch (activeTab) {
+        case "appointments":
+          return <AppointmentsScreen />;
+        case "records":
+          return <RecordsScreen />;
+        case "care":
+          return <CareHubScreen />;
+        case "profile":
+          return session
+            ? <ProfileScreen session={session} onSignOut={signOut} />
+            : <ProfileScreen session={{ user: { user_metadata: {}, email: "preview@tajdental.local" } } as Session} onSignOut={() => setDemoPatient(false)} />;
+        default:
+          return <HomeScreen onBook={() => setActiveTab("appointments")} onRecords={() => setActiveTab("records")} />;
+      }
+    };
+    return (
+      <View style={styles.app}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        <View style={styles.screen}>{content()}</View>
+        <View style={styles.tabBar}>
+          {tabs.map((tab) => {
+            const active = activeTab === tab.key;
+            return (
+              <Pressable key={tab.key} onPress={() => setActiveTab(tab.key)} style={styles.tabButton}>
+                <View style={[styles.tabIconWrap, active && styles.tabIconWrapActive]}>
+                  <Text style={[styles.tabIcon, active && styles.tabIconActive]}>{tab.icon}</Text>
+                </View>
+                <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>{tab.label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.app}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-      <View style={styles.screen}>{content()}</View>
-      <View style={styles.tabBar}>
-        {tabs.map((tab) => {
-          const active = activeTab === tab.key;
-          return (
-            <Pressable key={tab.key} onPress={() => setActiveTab(tab.key)} style={styles.tabButton}>
-              <View style={[styles.tabIconWrap, active && styles.tabIconWrapActive]}>
-                <Text style={[styles.tabIcon, active && styles.tabIconActive]}>{tab.icon}</Text>
-              </View>
-              <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>{tab.label}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
+      <AuthScreen
+        onExploreDemo={() => setShowOnboarding(true)}
+        onOpenClinicDemo={() => setDemoStaff(true)}
+        onAuthenticated={(nextSession) => {
+          setSession(nextSession);
+          setDemoPatient(false);
+          setDemoStaff(false);
+          setShowOnboarding(false);
+        }}
+      />
     </View>
   );
 }
