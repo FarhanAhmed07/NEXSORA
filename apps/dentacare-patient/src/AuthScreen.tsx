@@ -8,13 +8,21 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
 } from "react-native";
-import { colors, radius } from "./src/theme";
+import type { Session } from "@supabase/supabase-js";
+import { colors, radius } from "./theme";
+import { isSupabaseConfigured, supabase } from "./supabase";
 
 type AuthMode = "signin" | "signup";
 
-export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExploreDemo: () => void; onOpenClinicDemo: () => void }) {
+type Props = {
+  onExploreDemo: () => void;
+  onOpenClinicDemo: () => void;
+  onAuthenticated: (session: Session) => void;
+};
+
+export default function AuthScreen({ onExploreDemo, onOpenClinicDemo, onAuthenticated }: Props) {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -22,27 +30,98 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  const submit = () => {
-    if (!email.trim() || !password.trim()) {
+  const submit = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !password) {
       Alert.alert("Missing information", "Please enter your email and password.");
       return;
     }
-    if (mode === "signup" && (!name.trim() || !phone.trim() || !confirmPassword.trim())) {
-      Alert.alert("Missing information", "Please complete all fields.");
+    if (!isSupabaseConfigured || !supabase) {
+      Alert.alert("Setup required", "TAJ DENTAL connection is not configured on this device yet. Add the project values to the app's .env file and restart Expo.");
       return;
     }
-    if (mode === "signup" && password !== confirmPassword) {
-      Alert.alert("Password mismatch", "Your passwords do not match.");
-      return;
+    if (mode === "signup") {
+      if (!name.trim() || !phone.trim() || !confirmPassword) {
+        Alert.alert("Missing information", "Please complete all fields.");
+        return;
+      }
+      if (password.length < 8) {
+        Alert.alert("Password too short", "Use at least 8 characters.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        Alert.alert("Password mismatch", "Your passwords do not match.");
+        return;
+      }
     }
-    Alert.alert(
-      "Demo preview",
-      "The sign-in interface is ready. Secure account creation, OTP verification and login will be enabled after the authentication backend is connected. No account or password has been saved."
-    );
+
+    setBusy(true);
+    try {
+      if (mode === "signin") {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password,
+        });
+        if (error) throw error;
+        if (data.session) onAuthenticated(data.session);
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email: cleanEmail,
+          password,
+          options: {
+            data: {
+              full_name: name.trim(),
+              phone: phone.trim(),
+            },
+          },
+        });
+        if (error) throw error;
+        if (data.session) {
+          onAuthenticated(data.session);
+        } else {
+          Alert.alert("Verify your email", "Your account has been created. Check your email for the confirmation link, then return here and sign in.");
+          setMode("signin");
+        }
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      Alert.alert("Authentication failed", message);
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const field = (label: string, value: string, onChangeText: (value: string) => void, placeholder: string, options: { keyboardType?: "default" | "email-address" | "phone-pad"; secureTextEntry?: boolean; autoCapitalize?: "none" | "words" | "sentences" } = {}) => (
+  const recoverPassword = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail) {
+      Alert.alert("Email required", "Enter your email address first.");
+      return;
+    }
+    if (!isSupabaseConfigured || !supabase) {
+      Alert.alert("Setup required", "Configure the TAJ DENTAL connection in the app's .env file first.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail);
+      if (error) throw error;
+      Alert.alert("Check your email", "If this address has an account, password recovery instructions will be sent.");
+    } catch (error) {
+      Alert.alert("Could not send recovery email", error instanceof Error ? error.message : "Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const field = (
+    label: string,
+    value: string,
+    onChangeText: (value: string) => void,
+    placeholder: string,
+    options: { keyboardType?: "default" | "email-address" | "phone-pad"; secureTextEntry?: boolean; autoCapitalize?: "none" | "words" | "sentences" } = {},
+  ) => (
     <View style={styles.fieldWrap}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
@@ -55,6 +134,7 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
         secureTextEntry={options.secureTextEntry}
         autoCapitalize={options.autoCapitalize || "sentences"}
         autoCorrect={false}
+        editable={!busy}
       />
     </View>
   );
@@ -78,10 +158,10 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
 
         <View style={styles.card}>
           <View style={styles.modeSwitch}>
-            <Pressable onPress={() => setMode("signin")} style={[styles.modeButton, mode === "signin" && styles.modeButtonActive]}>
+            <Pressable disabled={busy} onPress={() => setMode("signin")} style={[styles.modeButton, mode === "signin" && styles.modeButtonActive]}>
               <Text style={[styles.modeText, mode === "signin" && styles.modeTextActive]}>Sign in</Text>
             </Pressable>
-            <Pressable onPress={() => setMode("signup")} style={[styles.modeButton, mode === "signup" && styles.modeButtonActive]}>
+            <Pressable disabled={busy} onPress={() => setMode("signup")} style={[styles.modeButton, mode === "signup" && styles.modeButtonActive]}>
               <Text style={[styles.modeText, mode === "signup" && styles.modeTextActive]}>Create account</Text>
             </Pressable>
           </View>
@@ -106,27 +186,31 @@ export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExpl
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
+                editable={!busy}
               />
-              <Pressable onPress={() => setShowPassword(!showPassword)}><Text style={styles.showText}>{showPassword ? "Hide" : "Show"}</Text></Pressable>
+              <Pressable disabled={busy} onPress={() => setShowPassword(!showPassword)}>
+                <Text style={styles.showText}>{showPassword ? "Hide" : "Show"}</Text>
+              </Pressable>
             </View>
           </View>
 
           {mode === "signup" && field("Confirm password", confirmPassword, setConfirmPassword, "Re-enter your password", { secureTextEntry: true, autoCapitalize: "none" })}
 
           {mode === "signin" && (
-            <Pressable style={styles.forgotButton} onPress={() => Alert.alert("Password recovery", "Password recovery will be available after secure authentication is connected.")}>
+            <Pressable disabled={busy} style={styles.forgotButton} onPress={recoverPassword}>
               <Text style={styles.forgotText}>Forgot password?</Text>
             </Pressable>
           )}
 
-          <Pressable style={styles.primaryButton} onPress={submit}>
-            <Text style={styles.primaryButtonText}>{mode === "signin" ? "Sign in" : "Create account"}  →</Text>
+          <Pressable disabled={busy} style={[styles.primaryButton, busy && styles.disabledButton]} onPress={submit}>
+            <Text style={styles.primaryButtonText}>{busy ? "Please wait…" : mode === "signin" ? "Sign in  →" : "Create account  →"}</Text>
           </Pressable>
           <Text style={styles.secureText}>Your health information deserves secure, private care.</Text>
+          {!isSupabaseConfigured && <Text style={styles.configWarning}>Connection setup required · Add the Supabase values to .env</Text>}
         </View>
 
         <Pressable style={styles.demoButton} onPress={onExploreDemo}>
-          <Text style={styles.demoButtonText}>Continue to patient setup</Text>
+          <Text style={styles.demoButtonText}>Continue to patient preview</Text>
         </Pressable>
         <Pressable style={styles.staffDemoButton} onPress={onOpenClinicDemo}>
           <Text style={styles.staffDemoText}>Clinic staff workspace preview  →</Text>
@@ -164,9 +248,13 @@ const styles = StyleSheet.create({
   forgotButton: { alignSelf: "flex-end", marginTop: -3, marginBottom: 16 },
   forgotText: { color: colors.pink, fontSize: 10, fontWeight: "800" },
   primaryButton: { backgroundColor: colors.pink, borderRadius: 13, paddingVertical: 15, alignItems: "center", marginTop: 3 },
+  disabledButton: { opacity: 0.65 },
   primaryButtonText: { color: "#FFFFFF", fontSize: 12, fontWeight: "900" },
   secureText: { color: colors.muted, fontSize: 9, textAlign: "center", lineHeight: 14, marginTop: 13 },
+  configWarning: { color: "#B45309", fontSize: 10, lineHeight: 15, textAlign: "center", marginTop: 10 },
   demoButton: { alignItems: "center", paddingVertical: 16 },
   demoButtonText: { color: colors.purple, fontSize: 11, fontWeight: "900" },
-  staffDemoButton: { alignItems: "center", paddingVertical: 12, marginTop: -5 },\n  staffDemoText: { color: colors.pink, fontSize: 10, fontWeight: "900" },\n  footer: { color: colors.muted, fontSize: 9, textAlign: "center", marginTop: 5 }
+  staffDemoButton: { alignItems: "center", paddingVertical: 12, marginTop: -5 },
+  staffDemoText: { color: colors.pink, fontSize: 10, fontWeight: "900" },
+  footer: { color: colors.muted, fontSize: 9, textAlign: "center", marginTop: 5 },
 });
