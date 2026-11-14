@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "DentaCare",
+    "slug": "dentacare-patient",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FAF7FF",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nexorasolutions.dentacare"
+    },
+    "android": {
+      "package": "com.nexorasolutions.dentacare",
+      "adaptiveIcon": {
+        "backgroundColor": "#6D28D9"
+      }
+    }
+  }
+}
