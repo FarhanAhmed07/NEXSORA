@@ -37,7 +37,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
   if (showPatients) return <PatientManagementScreen onBack={() => setShowPatients(false)} />;
   const doctor = mode === "doctor";
   const reception = mode === "reception";
-  const rows = doctor ? doctorPatients : receptionPatients;
+  const rows = doctor ? doctorPatients : reception ? receptionPatients : [];
   const title = doctor ? "Good morning, Dr. Carter" : reception ? "Good morning, Olivia" : "Welcome, Clinic Admin";
   return (
     <View style={styles.screen}>
@@ -71,7 +71,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
           </>}
         </View>
 
-        <View style={styles.sectionHead}><Text style={styles.sectionTitle}>{doctor ? "Today's patient schedule" : "Front desk queue"}</Text><Text style={styles.sectionAction}>View all</Text></View>
+        <View style={styles.sectionHead}><Text style={styles.sectionTitle}>{doctor ? "Today's patient schedule" : reception ? "Front desk queue" : "Clinic activity overview"}</Text><Text style={styles.sectionAction}>View all</Text></View>
         <View style={styles.listCard}>
           {rows.map((item, index) => (
             <Pressable key={item.name} style={[styles.patientRow, index === rows.length - 1 && styles.lastRow]} onPress={() => Alert.alert(item.name, "Patient details are sample data. Verified patient records will appear after secure clinic setup.")}>
@@ -94,6 +94,15 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
             ["▤", "Reports", "Clinic performance"],
             ["⚙", "Administration", "Clinic settings"]
           ] : [
+            ["＋", "Register patient", "New patient profile"],
+            ["▦", "Appointments", "Manage bookings"],
+            ["＄", "Billing", "Invoices & payments"],
+            ["♧", "Patient queue", "Check-in & status"],
+            ["♙", "Doctors", "Team & availability"],
+            ["▥", "Inventory", "Stock & expiry"],
+            ["▤", "Reports", "Clinic performance"],
+            ["⚙", "Administration", "Clinic settings"]
+          ] : reception ? [
             ["＋", "Register patient", "New patient profile"],
             ["▦", "Appointments", "Manage bookings"],
             ["＄", "Billing", "Invoices & payments"],
