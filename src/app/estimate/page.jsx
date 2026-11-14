@@ -1,3 +1,4 @@
+import './estimate.css';
 import Estimator from './estimator';
 
 export const metadata = {
