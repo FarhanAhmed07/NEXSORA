@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "DentaCare",
-    "slug": "dentacare-patient",
+    "name": "Taj Dental",
+    "slug": "taj-dental-patient",
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "backgroundColor": "#FAF7FF",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nexorasolutions.dentacare"
+      "bundleIdentifier": "com.nexorasolutions.tajdental"
     },
     "android": {
-      "package": "com.nexorasolutions.dentacare",
+      "package": "com.nexorasolutions.tajdental",
       "adaptiveIcon": {
         "backgroundColor": "#6D28D9"
       }
