@@ -6,6 +6,7 @@ A dental clinic management and patient-care mobile app developed by Nexora Solut
 
 ### Patient portal
 - Supabase email/password sign-in and account creation (patient or clinic owner)
+- Patient sign-up creates a secure auth account; linking a patient record to a clinic is a separate pending workflow
 - Password recovery email request (deep-link password update flow still pending)
 - Persisted authentication session
 - Patient onboarding preview
@@ -15,6 +16,7 @@ A dental clinic management and patient-care mobile app developed by Nexora Solut
 - Dental Care Assistant with general educational FAQs and urgent-care signposting
 
 ### Clinic staff workspace
+- Clinic-owner sign-up creates a clinic, its main branch and an owner membership
 - Doctor, reception and admin dashboard previews
 - Staff access is routed by active clinic membership from Supabase
 - Patient search and patient profile preview
