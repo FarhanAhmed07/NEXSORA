@@ -14,7 +14,7 @@ import { colors, radius } from "./src/theme";
 
 type AuthMode = "signin" | "signup";
 
-export default function AuthScreen({ onExploreDemo }: { onExploreDemo: () => void }) {
+export default function AuthScreen({ onExploreDemo, onOpenClinicDemo }: { onExploreDemo: () => void; onOpenClinicDemo: () => void }) {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -128,6 +128,9 @@ export default function AuthScreen({ onExploreDemo }: { onExploreDemo: () => voi
         <Pressable style={styles.demoButton} onPress={onExploreDemo}>
           <Text style={styles.demoButtonText}>Continue to patient setup</Text>
         </Pressable>
+        <Pressable style={styles.staffDemoButton} onPress={onOpenClinicDemo}>
+          <Text style={styles.staffDemoText}>Clinic staff workspace preview  →</Text>
+        </Pressable>
         <Text style={styles.footer}>DentaCare · A Product by Nexora Solutions</Text>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -165,5 +168,5 @@ const styles = StyleSheet.create({
   secureText: { color: colors.muted, fontSize: 9, textAlign: "center", lineHeight: 14, marginTop: 13 },
   demoButton: { alignItems: "center", paddingVertical: 16 },
   demoButtonText: { color: colors.purple, fontSize: 11, fontWeight: "900" },
-  footer: { color: colors.muted, fontSize: 9, textAlign: "center", marginTop: 5 }
+  staffDemoButton: { alignItems: "center", paddingVertical: 12, marginTop: -5 },\n  staffDemoText: { color: colors.pink, fontSize: 10, fontWeight: "900" },\n  footer: { color: colors.muted, fontSize: 9, textAlign: "center", marginTop: 5 }
 });
