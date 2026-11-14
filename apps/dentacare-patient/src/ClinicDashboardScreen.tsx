@@ -43,7 +43,7 @@ export default function ClinicDashboardScreen({ onExit, clinicId }: { onExit: ()
   if (showGovernance) return <ClinicGovernanceScreen onBack={() => setShowGovernance(false)} />;
   if (showAppointments) return <ClinicAppointmentsScreen clinicId={clinicId} onBack={() => setShowAppointments(false)} />;
   if (clinicalSection) return <ClinicClinicalScreen initialSection={clinicalSection} onBack={() => setClinicalSection(null)} />;
-  if (showPatients) return <PatientManagementScreen onBack={() => setShowPatients(false)} />;
+  if (showPatients) return <PatientManagementScreen clinicId={clinicId} onBack={() => setShowPatients(false)} />;
   const doctor = mode === "doctor";
   const reception = mode === "reception";
   const rows = doctor ? doctorPatients : reception ? receptionPatients : [];
