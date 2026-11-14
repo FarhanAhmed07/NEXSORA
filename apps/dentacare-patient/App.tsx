@@ -251,7 +251,7 @@ function ProfileScreen({ session, onSignOut }: { session: Session | null; onSign
       <Text style={styles.screenTitle}>My profile</Text>
       <View style={styles.profileCard}>
         <View style={styles.profileAvatar}><Text style={styles.profileAvatarText}>OR</Text></View>
-        <Text style={styles.profileName}>{String(session.user.user_metadata?.full_name || "TAJ DENTAL Patient")}</Text>
+        <Text style={styles.profileName}>{String(session?.user.user_metadata?.full_name || "TAJ DENTAL Patient")}</Text>
         <Text style={styles.profileEmail}>{session?.user.email || "Preview account"}</Text>
         <View style={styles.profileTag}><Text style={styles.profileTagText}>{session ? "SECURE PATIENT ACCOUNT" : "PATIENT PREVIEW"}</Text></View>
       </View>
