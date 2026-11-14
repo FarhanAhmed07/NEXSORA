@@ -53,11 +53,11 @@ export default function ClinicDashboardScreen({ onExit, clinicId, role }: { onEx
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.top}>
           <View style={styles.brandRow}><View style={styles.logo}><Text style={styles.logoText}>🦷</Text></View><View><Text style={styles.brand}>TAJ DENTAL</Text><Text style={styles.brandSub}>CLINIC MANAGEMENT</Text></View></View>
-          <Pressable style={styles.avatar} onPress={() => Alert.alert("Demo account", "Staff profile and permissions will be connected to secure authentication.")}><Text style={styles.avatarText}>{doctor ? "EC" : reception ? "OR" : "AD"}</Text></Pressable>
+          <Pressable style={styles.avatar} onPress={() => Alert.alert(clinicId ? "Verified clinic access" : "Demo account", clinicId ? "Signed in with the " + (role || "staff") + " role for this clinic. Database permissions are enforced separately by clinic membership." : "This is a sample workspace. Sign in with a clinic account for live data.")}><Text style={styles.avatarText}>{clinicId ? role === "owner" ? "OW" : role === "admin" ? "AD" : role === "receptionist" ? "RC" : "DR" : doctor ? "EC" : reception ? "OR" : "AD"}</Text></Pressable>
         </View>
         <View style={styles.demoBanner}><Text style={styles.demoBannerText}>{clinicId ? "LIVE CLINIC ACCOUNT · SUMMARY PREVIEW ONLY" : "DEMO WORKSPACE · SAMPLE CLINIC DATA"}</Text></View>
         <Text style={styles.greeting}>{title}</Text>
-        <Text style={styles.subtitle}>{doctor ? "Here is your clinical overview for today." : reception ? "Your front desk overview for today." : "Manage your Taj Dental clinic operations from one place."}</Text>
+        <Text style={styles.subtitle}>{clinicId ? "Manage patient care and clinic operations from your secure workspace." : doctor ? "Here is your clinical overview for today." : reception ? "Your front desk overview for today." : "Manage your Taj Dental clinic operations from one place."}</Text>
         {!clinicId ? <View style={styles.switcher}>
           <Pressable onPress={() => setMode("doctor")} style={[styles.switchButton, doctor && styles.switchActive]}><Text style={[styles.switchText, doctor && styles.switchTextActive]}>Doctor</Text></Pressable>
           <Pressable onPress={() => setMode("reception")} style={[styles.switchButton, reception && styles.switchActive]}><Text style={[styles.switchText, reception && styles.switchTextActive]}>Reception</Text></Pressable>
