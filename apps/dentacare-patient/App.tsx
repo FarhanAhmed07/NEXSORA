@@ -12,7 +12,7 @@ import { colors, radius } from "./src/theme";
 import AuthScreen from "./src/AuthScreen";
 import OnboardingScreen from "./src/OnboardingScreen";
 import CareHubScreen from "./src/CareHubScreen";
-import AppointmentBookingScreen from "./src/AppointmentBookingScreen";
+import AppointmentBookingScreen from "./src/AppointmentBookingScreen";\nimport ClinicDashboardScreen from "./src/ClinicDashboardScreen";
 
 type TabKey = "home" | "appointments" | "records" | "care" | "profile";
 
@@ -268,9 +268,9 @@ function ProfileScreen() {
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const [showApp, setShowApp] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);\n  const [showClinicDashboard, setShowClinicDashboard] = useState(false);
 
-  if (showOnboarding) {
+  if (showClinicDashboard) {\n    return (\n      <View style={styles.app}>\n        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />\n        <ClinicDashboardScreen onExit={() => setShowClinicDashboard(false)} />\n      </View>\n    );\n  }\n\n  if (showOnboarding) {
     return (
       <View style={styles.app}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
@@ -283,7 +283,7 @@ export default function App() {
     return (
       <View style={styles.app}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-        <AuthScreen onExploreDemo={() => setShowOnboarding(true)} />
+        <AuthScreen onExploreDemo={() => setShowOnboarding(true)} onOpenClinicDemo={() => setShowClinicDashboard(true)} />
       </View>
     );
   }
