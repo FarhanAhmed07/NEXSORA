@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View, type ViewStyle } from "react-native";
 import { colors, radius } from "./theme";
 
 type ModuleKey = "overview" | "treatments" | "prescriptions" | "dental" | "billing" | "documents" | "notifications";
@@ -24,7 +24,6 @@ export default function CareHubScreen() {
   const [selectedTooth, setSelectedTooth] = useState(16);
   const [paid, setPaid] = useState(false);
   const [readNotifications, setReadNotifications] = useState<number[]>([]);
-  const selectedModule = useMemo(() => modules.find(item => item.key === active)!, [active]);
 
   const go = (key: ModuleKey) => setActive(key);
   const header = (eyebrow: string, title: string, subtitle: string) => (
@@ -34,7 +33,7 @@ export default function CareHubScreen() {
       <Text style={styles.subtitle}>{subtitle}</Text>
     </View>
   );
-  const card = (children: React.ReactNode, extra?: object) => <View style={[styles.card, extra]}>{children}</View>;
+  const card = (children: React.ReactNode, extra?: ViewStyle) => <View style={[styles.card, extra]}>{children}</View>;
   const pill = (label: string, tone: "purple" | "green" | "orange" = "purple") => (
     <View style={[styles.pill, tone === "green" ? styles.pillGreen : tone === "orange" ? styles.pillOrange : styles.pillPurple]}>
       <Text style={[styles.pillText, tone === "green" ? styles.pillTextGreen : tone === "orange" ? styles.pillTextOrange : styles.pillTextPurple]}>{label}</Text>
