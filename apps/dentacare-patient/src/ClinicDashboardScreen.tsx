@@ -7,6 +7,7 @@ import BillingPaymentsScreen from "./BillingPaymentsScreen";
 import ReportsAnalyticsScreen from "./ReportsAnalyticsScreen";
 import ClinicAdminScreen from "./ClinicAdminScreen";
 import ClinicGovernanceScreen from "./ClinicGovernanceScreen";
+import ClinicAppointmentsScreen from "./ClinicAppointmentsScreen";
 
 type Mode = "doctor" | "reception" | "admin";
 const doctorPatients = [
@@ -32,11 +33,13 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
   const [showReports, setShowReports] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [showGovernance, setShowGovernance] = useState(false);
+  const [showAppointments, setShowAppointments] = useState(false);
   if (operationsSection) return <ClinicOperationsScreen initialSection={operationsSection} onBack={() => setOperationsSection(null)} />;
   if (showBilling) return <BillingPaymentsScreen onBack={() => setShowBilling(false)} />;
   if (showReports) return <ReportsAnalyticsScreen onBack={() => setShowReports(false)} />;
   if (showAdmin) return <ClinicAdminScreen onBack={() => setShowAdmin(false)} />;
   if (showGovernance) return <ClinicGovernanceScreen onBack={() => setShowGovernance(false)} />;
+  if (showAppointments) return <ClinicAppointmentsScreen onBack={() => setShowAppointments(false)} />;
   if (showPatients) return <PatientManagementScreen onBack={() => setShowPatients(false)} />;
   const doctor = mode === "doctor";
   const reception = mode === "reception";
@@ -125,7 +128,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
             ["☑", "Consent forms", "Patient approvals"],
             ["▧", "Audit log", "Staff activity history"],
             ["◇", "Subscription", "Clinic plan & billing"]
-          ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => name === "Patient records" ? setShowPatients(true) : name === "Doctors" ? setOperationsSection("Doctors") : name === "Inventory" ? setOperationsSection("Inventory") : name === "Billing" ? setShowBilling(true) : name === "Reports" ? setShowReports(true) : name === "Administration" ? setShowAdmin(true) : ["Communications", "Consent forms", "Audit log", "Subscription"].includes(name) ? setShowGovernance(true) : Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
+          ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => name === "Patient records" || name === "Register patient" || name === "Patient queue" ? setShowPatients(true) : name === "Appointments" ? setShowAppointments(true) : name === "Doctors" ? setOperationsSection("Doctors") : name === "Inventory" ? setOperationsSection("Inventory") : name === "Billing" ? setShowBilling(true) : name === "Reports" ? setShowReports(true) : name === "Administration" ? setShowAdmin(true) : ["Communications", "Consent forms", "Audit log", "Subscription"].includes(name) ? setShowGovernance(true) : Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
         </View>
 
         <View style={styles.notice}><Text style={styles.noticeTitle}>Privacy-first clinic workspace</Text><Text style={styles.noticeText}>Patient access, clinical notes, billing and staff permissions will be protected by verified roles and clinic-level data access. No real patient information is stored in this preview.</Text></View>
