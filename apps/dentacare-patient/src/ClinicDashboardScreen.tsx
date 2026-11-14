@@ -36,7 +36,7 @@ export default function ClinicDashboardScreen({ onExit, clinicId, role }: { onEx
   const [showGovernance, setShowGovernance] = useState(false);
   const [showAppointments, setShowAppointments] = useState(false);
   const [clinicalSection, setClinicalSection] = useState<"treatments" | "chart" | "prescriptions" | null>(null);
-  if (operationsSection) return <ClinicOperationsScreen initialSection={operationsSection} onBack={() => setOperationsSection(null)} />;
+  if (operationsSection) return <ClinicOperationsScreen initialSection={operationsSection} clinicId={clinicId} canManage={role === "owner" || role === "admin"} onBack={() => setOperationsSection(null)} />;
   if (showBilling) return <BillingPaymentsScreen onBack={() => setShowBilling(false)} />;
   if (showReports) return <ReportsAnalyticsScreen onBack={() => setShowReports(false)} />;
   if (showAdmin) return <ClinicAdminScreen onBack={() => setShowAdmin(false)} />;
