@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors, radius } from "./theme";
+import PatientManagementScreen from "./PatientManagementScreen";
 
 type Mode = "doctor" | "reception";
 const doctorPatients = [
@@ -20,6 +21,8 @@ function Metric({ label, value, note, tint }: { label: string; value: string; no
 
 export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }) {
   const [mode, setMode] = useState<Mode>("doctor");
+  const [showPatients, setShowPatients] = useState(false);
+  if (showPatients) return <PatientManagementScreen onBack={() => setShowPatients(false)} />;
   const doctor = mode === "doctor";
   const rows = doctor ? doctorPatients : receptionPatients;
   const title = doctor ? "Good morning, Dr. Carter" : "Good morning, Olivia";
@@ -73,7 +76,7 @@ export default function ClinicDashboardScreen({ onExit }: { onExit: () => void }
             ["▦", "Appointments", "Manage bookings"],
             ["＄", "Billing", "Invoices & payments"],
             ["♧", "Patient queue", "Check-in & status"]
-          ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
+          ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => name === "Patient records" ? setShowPatients(true) : Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
         </View>
 
         <View style={styles.notice}><Text style={styles.noticeTitle}>Privacy-first clinic workspace</Text><Text style={styles.noticeText}>Patient access, clinical notes, billing and staff permissions will be protected by verified roles and clinic-level data access. No real patient information is stored in this preview.</Text></View>
