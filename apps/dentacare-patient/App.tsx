@@ -331,8 +331,21 @@ export default function App() {
       if (!active) return;
       if (error) {
         setAccountType("error");
+      } else if (data && data.length > 0) {
+        setAccountType("staff");
+      } else if (session.user.user_metadata?.account_type === "clinic_admin") {
+        const clinicName = String(session.user.user_metadata?.clinic_name || "My Dental Clinic").trim();
+        const slugBase = clinicName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "dental-clinic";
+        const { error: setupError } = await supabase.rpc("create_clinic", {
+          _name: clinicName,
+          _slug: `${slugBase}-${session.user.id.slice(0, 8)}`,
+          _timezone: "Asia/Karachi",
+          _currency: "PKR",
+        });
+        if (!active) return;
+        setAccountType(setupError ? "error" : "staff");
       } else {
-        setAccountType(data && data.length > 0 ? "staff" : "patient");
+        setAccountType("patient");
       }
     };
     resolveAccount();
