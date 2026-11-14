@@ -26,8 +26,8 @@ function Metric({ label, value, note, tint }: { label: string; value: string; no
   return <View style={styles.metric}><View style={[styles.metricDot, { backgroundColor: tint }]} /><Text style={styles.metricValue}>{value}</Text><Text style={styles.metricLabel}>{label}</Text><Text style={styles.metricNote}>{note}</Text></View>;
 }
 
-export default function ClinicDashboardScreen({ onExit, clinicId }: { onExit: () => void; clinicId: string | null }) {
-  const [mode, setMode] = useState<Mode>("doctor");
+export default function ClinicDashboardScreen({ onExit, clinicId, role }: { onExit: () => void; clinicId: string | null; role: string | null }) {
+  const [mode, setMode] = useState<Mode>(() => role === "owner" || role === "admin" ? "admin" : role === "receptionist" ? "reception" : "doctor");
   const [showPatients, setShowPatients] = useState(false);
   const [operationsSection, setOperationsSection] = useState<"Doctors" | "Inventory" | null>(null);
   const [showBilling, setShowBilling] = useState(false);
@@ -47,7 +47,7 @@ export default function ClinicDashboardScreen({ onExit, clinicId }: { onExit: ()
   const doctor = mode === "doctor";
   const reception = mode === "reception";
   const rows = doctor ? doctorPatients : reception ? receptionPatients : [];
-  const title = doctor ? "Good morning, Dr. Carter" : reception ? "Good morning, Olivia" : "Welcome, Clinic Admin";
+  const title = clinicId ? "Welcome to your clinic" : doctor ? "Good morning, Dr. Carter" : reception ? "Good morning, Olivia" : "Welcome, Clinic Admin";
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -55,16 +55,16 @@ export default function ClinicDashboardScreen({ onExit, clinicId }: { onExit: ()
           <View style={styles.brandRow}><View style={styles.logo}><Text style={styles.logoText}>🦷</Text></View><View><Text style={styles.brand}>TAJ DENTAL</Text><Text style={styles.brandSub}>CLINIC MANAGEMENT</Text></View></View>
           <Pressable style={styles.avatar} onPress={() => Alert.alert("Demo account", "Staff profile and permissions will be connected to secure authentication.")}><Text style={styles.avatarText}>{doctor ? "EC" : reception ? "OR" : "AD"}</Text></Pressable>
         </View>
-        <View style={styles.demoBanner}><Text style={styles.demoBannerText}>DEMO WORKSPACE  ·  SAMPLE CLINIC DATA</Text></View>
+        <View style={styles.demoBanner}><Text style={styles.demoBannerText}>{clinicId ? "LIVE CLINIC ACCOUNT · SUMMARY PREVIEW ONLY" : "DEMO WORKSPACE · SAMPLE CLINIC DATA"}</Text></View>
         <Text style={styles.greeting}>{title}</Text>
         <Text style={styles.subtitle}>{doctor ? "Here is your clinical overview for today." : reception ? "Your front desk overview for today." : "Manage your Taj Dental clinic operations from one place."}</Text>
-        <View style={styles.switcher}>
+        {!clinicId ? <View style={styles.switcher}>
           <Pressable onPress={() => setMode("doctor")} style={[styles.switchButton, doctor && styles.switchActive]}><Text style={[styles.switchText, doctor && styles.switchTextActive]}>Doctor</Text></Pressable>
           <Pressable onPress={() => setMode("reception")} style={[styles.switchButton, reception && styles.switchActive]}><Text style={[styles.switchText, reception && styles.switchTextActive]}>Reception</Text></Pressable>
           <Pressable onPress={() => setMode("admin")} style={[styles.switchButton, mode === "admin" && styles.switchActive]}><Text style={[styles.switchText, mode === "admin" && styles.switchTextActive]}>Admin</Text></Pressable>
-        </View>
+        </View> : null}
 
-        <View style={styles.metrics}>
+        {!clinicId ? <><View style={styles.metrics}>
           {doctor ? <>
             <Metric label="Today's visits" value="08" note="+2 from yesterday" tint={colors.purple} />
             <Metric label="Completed" value="03" note="Of 8 appointments" tint="#28A879" />
@@ -89,7 +89,7 @@ export default function ClinicDashboardScreen({ onExit, clinicId }: { onExit: ()
               <Text style={styles.chevron}>›</Text>
             </Pressable>
           ))}
-        </View>
+        </View></> : <View style={styles.liveNotice}><Text style={styles.liveNoticeTitle}>Live clinic workspace</Text><Text style={styles.liveNoticeText}>Patient records and appointment management are connected to this clinic&apos;s database. Dashboard totals and other modules are still being integrated, so sample figures are hidden here.</Text></View>}
 
         <View style={styles.sectionHead}><Text style={styles.sectionTitle}>{doctor ? "Clinical tools" : reception ? "Front desk tools" : "Administration tools"}</Text><Text style={styles.sectionAction}>Workspace</Text></View>
         <View style={styles.toolsGrid}>
@@ -125,7 +125,7 @@ export default function ClinicDashboardScreen({ onExit, clinicId }: { onExit: ()
           ]).map(([icon, name, sub]) => <Pressable key={name} style={styles.tool} onPress={() => name === "Patient records" || name === "Register patient" || name === "Patient queue" ? setShowPatients(true) : name === "Appointments" ? setShowAppointments(true) : name === "Treatment plans" ? setClinicalSection("treatments") : name === "Dental chart" ? setClinicalSection("chart") : name === "Prescriptions" ? setClinicalSection("prescriptions") : name === "Doctors" ? setOperationsSection("Doctors") : name === "Inventory" ? setOperationsSection("Inventory") : name === "Billing" ? setShowBilling(true) : name === "Reports" ? setShowReports(true) : name === "Administration" ? setShowAdmin(true) : ["Communications", "Consent forms", "Audit log", "Subscription"].includes(name) ? setShowGovernance(true) : Alert.alert(name, "This workspace module is part of the planned demo. Secure clinic workflows will be connected after approval.")}><View style={styles.toolIcon}><Text style={styles.toolIconText}>{icon}</Text></View><Text style={styles.toolName}>{name}</Text><Text style={styles.toolSub}>{sub}</Text></Pressable>)}
         </View>
 
-        <View style={styles.notice}><Text style={styles.noticeTitle}>Privacy-first clinic workspace</Text><Text style={styles.noticeText}>Patient access, clinical notes, billing and staff permissions will be protected by verified roles and clinic-level data access. No real patient information is stored in this preview.</Text></View>
+        <View style={styles.notice}><Text style={styles.noticeTitle}>Privacy-first clinic workspace</Text><Text style={styles.noticeText}>{clinicId ? "Clinic access is resolved from your active membership. Patient and appointment records use clinic-level database policies. Clinical notes, billing, inventory and remaining modules still require integration and verification." : "This is a fictional preview workspace. Do not enter real patient information in demo mode."}</Text></View>
         <Pressable style={styles.exitButton} onPress={onExit}><Text style={styles.exitText}>← Back to patient app</Text></Pressable>
         <Text style={styles.footer}>TAJ DENTAL · Developed by Nexora Solutions</Text>
       </ScrollView>
@@ -146,6 +146,9 @@ const styles = StyleSheet.create({
   avatarText: { color: colors.purpleDark, fontSize: 11, fontWeight: "900" },
   demoBanner: { alignSelf: "flex-start", backgroundColor: colors.pinkSoft, borderRadius: 20, paddingHorizontal: 11, paddingVertical: 7, marginBottom: 15 },
   demoBannerText: { color: colors.pink, fontSize: 8, fontWeight: "900", letterSpacing: 1 },
+  liveNotice: { backgroundColor: colors.purpleSoft, borderRadius: 15, padding: 15, marginBottom: 18 },
+  liveNoticeTitle: { color: colors.purpleDark, fontSize: 12, fontWeight: "900" },
+  liveNoticeText: { color: colors.purpleDark, fontSize: 10, lineHeight: 15, marginTop: 6 },
   greeting: { color: colors.text, fontSize: 24, fontWeight: "900", letterSpacing: -0.7 },
   subtitle: { color: colors.muted, fontSize: 11, marginTop: 6, marginBottom: 18 },
   switcher: { flexDirection: "row", backgroundColor: colors.purpleSoft, borderRadius: 14, padding: 4, marginBottom: 17 },
