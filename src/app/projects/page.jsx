@@ -40,7 +40,7 @@ export default function ProjectsPage() {
           <div className="eyebrow">SELECTED CAPABILITIES</div>
           <h1>Ideas shaped into <span className="text-gradient">digital experiences.</span></h1>
           <p>Explore visual directions for the kinds of products Nexora can design and build. These are illustrative concepts, not a list of completed client deployments.</p>
-          <div className="page-hero-meta"><span>12 product concepts</span><span>Web · Mobile · AI · Software</span><span>Visual previews</span></div><p className="showcase-cta"><Link className="button" href="/showcase">Try our interactive demos ↗</Link></p>
+          <div className="page-hero-meta"><span>12 illustrated product concepts</span><span>Web · Mobile · AI · Software</span><span>Visual previews</span></div>
         </div>
       </section>
       <section className="section">
