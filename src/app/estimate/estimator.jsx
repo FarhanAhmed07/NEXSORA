@@ -27,7 +27,7 @@ const integrations = {
   few: { label: '1–2 integrations', multiplier: 1.15 },
   several: { label: '3+ integrations', multiplier: 1.35 }
 };
-const money = value => '
+const money = value => 'USD ' + (Math.round(value / 50) * 50).toLocaleString();
 
 export default function Estimator() {
   const [service, setService] = useState('website');
