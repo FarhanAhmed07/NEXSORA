@@ -1,6 +1,6 @@
-# DentaCare Patient App
+# TAJ DENTAL Mobile App
 
-Patient-facing mobile app starter for DentaCare by Nexora Solutions.
+Clinic and patient mobile app preview for Taj Dental, developed by Nexora Solutions.
 
 ## Current starter screens
 
