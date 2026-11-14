@@ -78,7 +78,7 @@ export default function CareHubScreen() {
         <>
           <View style={styles.rowBetween}><Text style={styles.cardEyebrow}>ACTIVE PLAN · SAMPLE</Text>{pill("In progress", "green")}</View>
           <Text style={styles.itemTitle}>Comprehensive dental care</Text>
-          <Text style={styles.body}>Smile Dental Studio · Created 03 Nov 2026</Text>
+          <Text style={styles.body}>Taj Dental · Created 03 Nov 2026</Text>
           <View style={styles.separator} />
           {[
             ["Dental examination", "Completed", "green"],
@@ -143,7 +143,7 @@ export default function CareHubScreen() {
         <>
           <Text style={styles.cardEyebrow}>SAMPLE INVOICE · DC-2026-001</Text>
           <Text style={styles.itemTitle}>Dental consultation</Text>
-          <Text style={styles.body}>Smile Dental Studio · 03 Nov 2026</Text>
+          <Text style={styles.body}>Taj Dental · 03 Nov 2026</Text>
           <View style={styles.separator} />
           <View style={styles.rowBetween}><Text style={styles.body}>Consultation fee</Text><Text style={styles.money}>Rs. 2,000</Text></View>
           <View style={styles.rowBetween}><Text style={styles.body}>Dental examination</Text><Text style={styles.money}>Rs. 1,500</Text></View>
@@ -199,11 +199,11 @@ export default function CareHubScreen() {
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.topBar}>
-        <Pressable onPress={() => go("overview")} style={styles.brandRow}><View style={styles.brandMark}><Text style={styles.brandMarkText}>✦</Text></View><View><Text style={styles.brandName}>DentaCare</Text><Text style={styles.brandCaption}>PATIENT CARE HUB</Text></View></Pressable>
+        <Pressable onPress={() => go("overview")} style={styles.brandRow}><View style={styles.brandMark}><Text style={styles.brandMarkText}>🦷</Text></View><View><Text style={styles.brandName}>TAJ DENTAL</Text><Text style={styles.brandCaption}>PATIENT CARE HUB</Text></View></Pressable>
         {active !== "overview" ? <Pressable style={styles.backButton} onPress={() => go("overview")}><Text style={styles.backText}>← All tools</Text></Pressable> : null}
       </View>
       {body}
-      <Text style={styles.footer}>DentaCare · A Product by Nexora Solutions</Text>
+      <Text style={styles.footer}>TAJ DENTAL · A Product by Nexora Solutions</Text>
     </ScrollView>
   );
 }
