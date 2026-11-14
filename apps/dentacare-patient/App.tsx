@@ -11,13 +11,15 @@ import {
 import { colors, radius } from "./src/theme";
 import AuthScreen from "./src/AuthScreen";
 import OnboardingScreen from "./src/OnboardingScreen";
+import CareHubScreen from "./src/CareHubScreen";
 
-type TabKey = "home" | "appointments" | "records" | "profile";
+type TabKey = "home" | "appointments" | "records" | "care" | "profile";
 
 const tabs: { key: TabKey; label: string; icon: string }[] = [
   { key: "home", label: "Home", icon: "⌂" },
   { key: "appointments", label: "Appointments", icon: "▦" },
   { key: "records", label: "Records", icon: "▤" },
+  { key: "care", label: "Care", icon: "✦" },
   { key: "profile", label: "Profile", icon: "○" }
 ];
 
@@ -310,6 +312,8 @@ export default function App() {
         return <AppointmentsScreen />;
       case "records":
         return <RecordsScreen />;
+      case "care":
+        return <CareHubScreen />;
       case "profile":
         return <ProfileScreen />;
       default:
