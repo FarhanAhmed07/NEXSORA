@@ -9,6 +9,7 @@ import {
   View
 } from "react-native";
 import { colors, radius } from "./src/theme";
+import AuthScreen from "./src/AuthScreen";
 
 type TabKey = "home" | "appointments" | "records" | "profile";
 
@@ -281,6 +282,16 @@ function ProfileScreen() {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
+  const [showApp, setShowApp] = useState(false);
+
+  if (!showApp) {
+    return (
+      <View style={styles.app}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        <AuthScreen onExploreDemo={() => setShowApp(true)} />
+      </View>
+    );
+  }
 
   const content = () => {
     switch (activeTab) {
