@@ -3,8 +3,8 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-nati
 import { colors, radius } from "./theme";
 
 const clinics = [
-  { name: "Smile Dental Studio", area: "F-7 Markaz · Islamabad", initials: "SS" },
-  { name: "Nexora Dental Care", area: "Blue Area · Islamabad", initials: "ND" }
+  { name: "Taj Dental", area: "Main clinic · address to be configured", initials: "TD" },
+  { name: "Taj Dental · Branch 02 (Preview)", area: "Branch 02 · address to be configured", initials: "T2" }
 ];
 const doctors = [
   { name: "Dr. Emily Carter", specialty: "General Dentist", initials: "EC", clinic: 0 },
